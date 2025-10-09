@@ -1,0 +1,21 @@
+[input]
+url = "https://www.nationstates.net/api/all"
+workers = 2
+
+[output.redis]
+enabled = true
+url = "redis://0.0.0.0"
+
+[output.console]
+enabled = true
+include = ["move"]
+
+[output.file]
+enabled = true
+path = "akari.log"
+exclude = ["law", "rupdate"]
+
+[output.rmq]
+enabled = true
+url = "amqp://guest:guest@0.0.0.0:5672"
+exchange_name = "akari_events"
