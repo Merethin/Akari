@@ -122,8 +122,7 @@ pub async fn initialize_outputs(config: &Config) -> Result<OutputChannels, Box<d
             ).await?;
 
             info!("Created RabbitMQ output exchange named '{}'", exchange);
-
-            let channel = conn.create_channel().await?;
+            
             channel.confirm_select(ConfirmSelectOptions::default()).await?;
             channels.rmq = Some(channel);
         }
