@@ -7,7 +7,7 @@ mod output;
 mod worker;
 
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{Instant, SystemTime, UNIX_EPOCH};
 use std::{env, process::exit};
 use config_file::FromConfigFile;
 use crossbeam::channel::Sender;
@@ -67,6 +67,8 @@ async fn main_loop(
     sender: Sender<(usize, Message)>,
     backoff: &mut ExponentialBackoff<'_>,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    let mut last_event_id: Option<i64> = None;
+
     loop {
         let mut connection = connect_retry_loop(&config, user_agent, backoff).await;
 
@@ -77,48 +79,56 @@ async fn main_loop(
         });
 
         let mut state = ReadMessageState::default();
-        let mut last_event_time = SystemTime::now();
-        let mut last_event_id: Option<i64> = None;
+        let mut last_event_time = Instant::now();
 
         loop {
-            match read_and_parse_message(&mut connection, &mut state).await? {
-                ReadMessageResult::Message(event) => {
-                    let current_id: i64 = event.id.parse().unwrap_or(-1);
+            let should_continue = read_and_parse_messages(&mut connection, &mut state)
+                .await?.into_iter().map(|message| {
+                match message {
+                    ReadMessageResult::Message(event) => {
+                        let current_id: i64 = event.id.parse().unwrap_or(-1);
 
-                    if Some(current_id) == last_event_id {
-                        continue; // Skip duplicate event
-                    }
-
-                    if let Some((last_id, events_missed)) = detect_missed_events(last_event_id, current_id) {
-                        sender.send(sequenced(
-                            Message::System(
-                                SystemEvent::events_missed(
-                                    now(), events_missed, last_id, current_id
-                                )
-                            )
-                        )).unwrap_or_else(|err| {
-                            error!("Failed to send system event to worker: {err}");
-                        });
-                    }
-
-                    sender.send(sequenced(Message::Server(event))).unwrap_or_else(|err| {
-                        error!("Failed to send server event to worker: {err}");
-                    });
-
-                    last_event_time = SystemTime::now();
-                    last_event_id = Some(current_id);
-                },
-                ReadMessageResult::NoMessage => {
-                    if let Ok(elapsed) = SystemTime::now().duration_since(last_event_time)
-                        && elapsed.as_secs() > 30 {
-                            warn!("No events in the last 30 seconds, dropping connection and reconnecting");
-                            break;
+                        if Some(current_id) == last_event_id {
+                            return true; // Skip duplicate event
                         }
-                },
-                ReadMessageResult::ResponseError => {
-                    break;
+
+                        if let Some((last_id, events_missed)) = detect_missed_events(last_event_id, current_id) {
+                            sender.send(sequenced(
+                                Message::System(
+                                    SystemEvent::events_missed(
+                                        now(), events_missed, last_id, current_id
+                                    )
+                                )
+                            )).unwrap_or_else(|err| {
+                                error!("Failed to send system event to worker: {err}");
+                            });
+                        }
+
+                        sender.send(sequenced(Message::Server(event))).unwrap_or_else(|err| {
+                            error!("Failed to send server event to worker: {err}");
+                        });
+
+                        last_event_time = Instant::now();
+                        last_event_id = Some(current_id);
+
+                        return true;
+                    },
+                    ReadMessageResult::NoMessage => {
+                        let elapsed = Instant::now().duration_since(last_event_time);
+                        if elapsed.as_secs() > 30 {
+                            warn!("No events in the last 30 seconds, dropping connection and reconnecting");
+                            return false;
+                        }
+
+                        return true;
+                    },
+                    ReadMessageResult::ResponseError => {
+                        return false;
+                    }
                 }
-            };
+            }).last().unwrap_or(true);
+
+            if !should_continue { break; }
         }
 
         drop(connection);
@@ -185,23 +195,23 @@ enum ReadMessageResult {
     ResponseError
 }
 
-async fn read_and_parse_message(
+async fn read_and_parse_messages(
     connection: &mut Connection,
     state: &mut ReadMessageState,
-) -> Result<ReadMessageResult, Box<dyn std::error::Error>> {
-    let message = match net::read_message(connection, state).await {
+) -> Result<Vec<ReadMessageResult>, Box<dyn std::error::Error>> {
+    let messages = match net::read_messages(connection, state).await {
         Ok(v) => Ok(v),
         Err(err) => {
             let e = match err.downcast::<reqwest::Error>() {
                 Ok(req_err) => {
                     if req_err.is_timeout() {
                         warn!("Read from NationStates timed out");
-                        return Ok(ReadMessageResult::ResponseError);
+                        return Ok(vec![ReadMessageResult::ResponseError]);
                     }
 
                     if req_err.is_decode() {
                         warn!("Error decoding response from NationStates");
-                        return Ok(ReadMessageResult::ResponseError);
+                        return Ok(vec![ReadMessageResult::ResponseError]);
                     }
 
                     req_err
@@ -215,10 +225,10 @@ async fn read_and_parse_message(
         }
     }?;
 
-    Ok(match parser::parse_message(message.as_str()) {
+    Ok(messages.iter().map(|message| {match parser::parse_message(message.as_str()) {
         Some(event) => ReadMessageResult::Message(event),
         None => ReadMessageResult::NoMessage,
-    })
+    }}).collect())
 }
 
 fn detect_missed_events(last_event_id: Option<i64>, current_id: i64) -> Option<(i64, i64)> {

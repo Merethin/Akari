@@ -132,8 +132,8 @@ impl ReadMessageState {
     }
 }
 
-pub async fn read_message(conn: &mut Connection, state: &mut ReadMessageState) 
-    -> Result<String, Box<dyn std::error::Error>> 
+pub async fn read_messages(conn: &mut Connection, state: &mut ReadMessageState) 
+    -> Result<Vec<String>, Box<dyn std::error::Error>> 
 {
     while let Some(item) = conn.stream.next().await {
         let data = item?;
@@ -144,19 +144,27 @@ pub async fn read_message(conn: &mut Connection, state: &mut ReadMessageState)
             if slice.ends_with(b"\n") {
                 let line = String::from_utf8(std::mem::take(&mut state.buffer))?;
                 state.lines.push_back(line);
-
-                if slice == b"\n" { break; }
             }
         }
 
-        if state.lines.back().is_some_and(|line| line == "\n") {
+        if state.lines.contains(&"\n".into()) {
             break;
         }
     }
 
-    let message = state.lines.drain(..)
-        .take_while(|line| line != "\n")
-        .collect::<String>();
+    let mut result: Vec<String> = Vec::new();
 
-    Ok(message)
+    if let Some(last_delimiter) = state.lines.iter().rposition(|x| x == "\n") {
+        let mut complete = state.lines.split_off(last_delimiter + 1);
+        std::mem::swap(&mut complete, &mut state.lines);
+
+        let mut iter = complete.into_iter();
+        loop {
+            let chunk = iter.by_ref().take_while(|line| line != "\n").collect::<String>();
+            if !chunk.is_empty() { result.push(chunk); }
+            else { break; }
+        }
+    }
+
+    Ok(result)
 }

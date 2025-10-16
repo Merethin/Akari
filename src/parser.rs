@@ -72,28 +72,27 @@ pub fn handle_server_message(
         return None;
     }
 
-    happenings.regexes.iter().enumerate().filter(
-        |(index, _)| { matches.matched(*index) }
-    ).find_map(|(_, (category, pattern))| {
-        match pattern.captures(line) {
-            Some(captures) => {
-                let regions = extract_region_buckets(&evt.buckets);
+    // next().unwrap() should never fail as the !matched_any() case was already handled above
+    let (category, pattern) = &happenings.regexes[matches.iter().next().unwrap()];
 
-                let event = Event::new(
-                    evt.id.parse().unwrap_or(-1), 
-                    evt.time, 
-                    line, 
-                    category
-                );
+    match pattern.captures(line) {
+        Some(captures) => {
+            let regions = extract_region_buckets(&evt.buckets);
 
-                process_regex_match(
-                    event,
-                    captures,
-                    &regions,
-                    happenings,
-                )
-            },
-            None => None,
-        }
-    })
+            let event = Event::new(
+                evt.id.parse().unwrap_or(-1), 
+                evt.time, 
+                line, 
+                category
+            );
+
+            process_regex_match(
+                event,
+                captures,
+                &regions,
+                happenings,
+            )
+        },
+        None => None,
+    }
 }
