@@ -66,9 +66,15 @@ pub struct Event {
 - actor: first group
 - origin: from `region:` bucket or [unknown]
 
-**Nation uploads a new national banner (chbanner)**
+**Nation uploads a new national banner (nbanner)**
 
 `^@@([0-9a-z_-]+)@@ created a custom banner$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
+
+**Nation updates a national banner (chbanner)**
+
+`^@@[0-9a-z_-]+)@@ changed a custom banner$`
 - actor: first group
 - origin: from `region:` bucket or [unknown]
 
@@ -185,6 +191,12 @@ pub struct Event {
 **Embassy closed between two regions (euclose)**
 
 `^Embassy cancelled between %%([0-9a-z_-]+)%% and %%([0-9a-z_-]+)%%$`
+- origin: first group
+- destination: second group
+
+**Embassy construction between two regions aborted because one of them ceased to exist (euabort)**
+
+`^Construction of embassies aborted between %%([0-9a-z_-]+)%% and %%([0-9a-z_-]+)%%$`
 - origin: first group
 - destination: second group
 
@@ -314,7 +326,7 @@ pub struct Event {
 
 **Governor/Delegate appoints other nation as a RO (roadd)**
 
-`^@@([0-9a-z_-]+)@@ appointed @@([0-9a-z_-]+)@@ as (.+) with authority over (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) in %%([0-9a-z_-]+)%%$`
+`^@@([0-9a-z_-]+)@@ appointed @@([0-9a-z_-]+)@@ as (.+) with authority over (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) in %%([0-9a-z_-]+)%%$`
 - actor: first group
 - receptor: second group
 - origin: fifth group
@@ -330,7 +342,7 @@ pub struct Event {
 
 **Governor/Delegate changes a nation's RO authority (rochange)**
 
-`^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ as (.+) in %%([0-9a-z_-]+)%%$`
+`^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ as (.+) in %%([0-9a-z_-]+)%%$`
 - actor: first group
 - receptor: fifth group
 - origin: seventh group
@@ -338,7 +350,7 @@ pub struct Event {
 
 **Governor/Delegate changes a nation's RO authority and position title (rochname)**
 
-`^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ and renamed the office from "(.+)" to "(.+)" in %%([0-9a-z_-]+)%%$`
+`^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ and renamed the office from "(.+)" to "(.+)" in %%([0-9a-z_-]+)%%$`
 - actor: first group
 - receptor: fifth group
 - origin: eighth group
@@ -479,19 +491,29 @@ Yes, this is functionally the same as the above. Why it needs to exist, I don't 
 - actor: first group
 - origin: second group
 
-**Nation cancels the process of converting to a Stronghold (stopfn)**
+**Nation cancels the process of converting to a Stronghold (stopst)**
 
 `^@@([0-9a-z_-]+)@@ canceled the process of removing %%([0-9a-z_-]+)%%'s designation as a Frontier$`
 - actor: first group
 - origin: second group
 
-**Region converts to a Stronghold**
+**Region converts to a Stronghold (finishst)**
 
-finishst: ?
+`^%%([0-9a-z_-]+)%% ceased to operate as a Frontier$`
+- origin: first group
 
-**Governor appointed to office when converting to a Stronghold**
+**Region converts to a Stronghold (finishst)**
 
-stgovadd: ?
+`^Ceased to operate as a Frontier$`
+- origin: from `region:` bucket or [unknown]
+
+Yes, this is functionally the same as the above. Why it needs to exist, I don't know.
+
+**Governor appointed to office when converting to a Stronghold (stgovadd)**
+
+`^@@([0-9a-z_-]+)@@ became Governor of %%([0-9a-z_-]+)%%$`
+- receptor: first group
+- origin: second group
 
 **Region sends a request to annex another region (annexreq)**
 
@@ -535,6 +557,21 @@ stgovadd: ?
 - origin: second group
 - data: third group (nation group previously allowed to post)
 
+**Nation is nominated in a Security Council proposal (nscnom)**
+
+`^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$`
+- actor: third group
+- receptor: first group
+- origin: from `region:` bucket or [unknown]
+- data: second group (proposal type)
+
+**Region is nominated in a Security Council proposal (rscnom)**
+
+`^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation|Liberation|Injunction) by @@([0-9a-z_-]+)@@$`
+- actor: third group
+- origin: first group
+- data: second group (proposal type)
+
 ## bucket: maps
 
 **Nation creates a new map (mcreate)**
@@ -572,12 +609,19 @@ stgovadd: ?
 - origin: from `region:` bucket or [unknown]
 - data: second group (new map ID), third group (old map ID)
 
-**Nation removes its endorsement from a map (munendo)**
+**Map loses the endorsement of a nation (mlendo)**
 
 `^&&([0-9a-z_-]+)&& lost the endorsement of @@([0-9a-z_-]+)@@$`
 - actor: second group
 - origin: from `region:` bucket or [unknown]
 - data: first group (map ID)
+
+**Nation removes its endorsement from a map (munendo)**
+
+`^@@([0-9a-z_-]+)@@ removed its endorsement from &&([0-9a-z_-]+)&&$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
+- data: second group (map ID)
 
 # Movement
 

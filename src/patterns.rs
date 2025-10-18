@@ -72,7 +72,8 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("chcensus", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ranked in the Top (1|5|10)% of the world for (.+)$"#)?),
         ("chfield", Regex::new(r#"^@@([0-9a-z_-]+)@@ changed its national ([a-z ]+) to "([^"]+)"((?:,? (?:and )?its [a-z ]+ to "[^"]+")+)?$"#)?),
         ("chflag", Regex::new(r#"^@@([0-9a-z_-]+)@@ altered its national flag$"#)?),
-        ("chbanner", Regex::new(r#"^@@([0-9a-z_-]+)@@ created a custom banner$"#)?),
+        ("nbanner", Regex::new(r#"^@@([0-9a-z_-]+)@@ created a custom banner$"#)?),
+        ("chbanner", Regex::new(r#"^@@([0-9a-z_-]+)@@ changed a custom banner$"#)?),
         ("chinf", Regex::new(r#"^@@([0-9a-z_-]+)@@'s influence in %%([0-9a-z_-]+)%% (rose|fell) from "([A-Za-z -]+)" to "([A-Za-z -]+)"$"#)?),
         ("rvfield", Regex::new(r#"^@@([0-9a-z_-]+)@@ revoked its national (faith|leader|capital)$"#)?),
         // bucket: dispatch
@@ -92,6 +93,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("eabort", Regex::new(r#"^@@([0-9a-z_-]+)@@ aborted construction of embassies between %%([0-9a-z_-]+)%% and %%([0-9a-z_-]+)%%$"#)?),
         ("eufinish", Regex::new(r#"^Embassy established between %%([0-9a-z_-]+)%% and %%([0-9a-z_-]+)%%$"#)?),
         ("euclose", Regex::new(r#"^Embassy cancelled between %%([0-9a-z_-]+)%% and %%([0-9a-z_-]+)%%$"#)?),
+        ("euabort", Regex::new(r#"^Construction of embassies aborted between %%([0-9a-z_-]+)%% and %%([0-9a-z_-]+)%%$"#)?),
         // bucket: eject
         ("eject", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ejected from %%([0-9a-z_-]+)%% by @@([0-9a-z_-]+)@@$"#)?),
         ("banject", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ejected and banned from %%([0-9a-z_-]+)%% by @@([0-9a-z_-]+)@@$"#)?),
@@ -113,10 +115,10 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("rmpoll", Regex::new(r#"^@@([0-9a-z_-]+)@@ deleted a regional poll in %%([0-9a-z_-]+)%%$"#)?),
         ("addtag", Regex::new(r#"^@@([0-9a-z_-]+)@@ added the tag "([^"]+)" to %%([0-9a-z_-]+)%%$"#)?),
         ("rmtag", Regex::new(r#"^@@([0-9a-z_-]+)@@ removed the tag "([^"]+)" from %%([0-9a-z_-]+)%%$"#)?),
-        ("roadd", Regex::new(r#"^@@([0-9a-z_-]+)@@ appointed @@([0-9a-z_-]+)@@ as (.+) with authority over (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) in %%([0-9a-z_-]+)%%$"#)?),
+        ("roadd", Regex::new(r#"^@@([0-9a-z_-]+)@@ appointed @@([0-9a-z_-]+)@@ as (.+) with authority over (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) in %%([0-9a-z_-]+)%%$"#)?),
         ("rorename", Regex::new(r#"^@@([0-9a-z_-]+)@@ renamed the office held by @@([0-9a-z_-]+)@@ from "(.+)" to "(.+)" in %%([0-9a-z_-]+)%%$"#)?),
-        ("rochange", Regex::new(r#"^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ as (.+) in %%([0-9a-z_-]+)%%$"#)?),
-        ("rochname", Regex::new(r#"^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ and renamed the office from "(.+)" to "(.+)" in %%([0-9a-z_-]+)%%$"#)?),
+        ("rochange", Regex::new(r#"^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ as (.+) in %%([0-9a-z_-]+)%%$"#)?),
+        ("rochname", Regex::new(r#"^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ and renamed the office from "(.+)" to "(.+)" in %%([0-9a-z_-]+)%%$"#)?),
         ("roremove", Regex::new(r#"^@@([0-9a-z_-]+)@@ dismissed @@([0-9a-z_-]+)@@ as (.+) of %%([0-9a-z_-]+)%%$"#)?),
         ("roresign", Regex::new(r#"^@@([0-9a-z_-]+)@@ resigned as (.+?) of %%([0-9a-z_-]+)%%$"#)?),
         ("rgovtset", Regex::new(r#"^@@([0-9a-z_-]+)@@ named the Governor's office  <b>(.+)</b> in %%([0-9a-z_-]+)%%$"#)?),
@@ -138,19 +140,25 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("fngovrem", Regex::new(r#"^@@([0-9a-z_-]+)@@ stepped down as Governor of %%([0-9a-z_-]+)%% as it became a Frontier$"#)?),
         ("beginst", Regex::new(r#"^@@([0-9a-z_-]+)@@ began the process of removing %%([0-9a-z_-]+)%%'s designation as a Frontier$"#)?),
         ("stopst", Regex::new(r#"^@@([0-9a-z_-]+)@@ canceled the process of removing %%([0-9a-z_-]+)%%'s designation as a Frontier$"#)?),
+        ("finishst", Regex::new(r#"^%%([0-9a-z_-]+)%% ceased to operate as a Frontier$"#)?),
+        ("finishst", Regex::new(r#"^Ceased to operate as a Frontier$"#)?),
+        ("stgovadd", Regex::new(r#"^@@([0-9a-z_-]+)@@ became Governor of %%([0-9a-z_-]+)%%$"#)?),
         ("annexreq", Regex::new(r#"^@@([0-9a-z_-]+)@@ sent a demand to annex %%([0-9a-z_-]+)%%$"#)?),
         ("annexrcv", Regex::new(r#"^%%([0-9a-z_-]+)%% received a demand from @@([0-9a-z_-]+)@@ to be annexed by %%([0-9a-z_-]+)%%$"#)?),
         ("annexrej", Regex::new(r#"^@@([0-9a-z_-]+)@@ rejected a demand for %%([0-9a-z_-]+)%% to be annexed into %%([0-9a-z_-]+)%%$"#)?),
         ("annexacc", Regex::new(r#"^@@([0-9a-z_-]+)@@ accepted a demand to be annexed by %%([0-9a-z_-]+)%%$"#)?),
         ("addxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ granted posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board to ([a-zA-Z ]+) in embassy regions$"#)?),
         ("remxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ revoked posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board from ([a-zA-Z ]+) in embassy regions$"#)?),
+        ("nscnom", Regex::new(r#"^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
+        ("rscnom", Regex::new(r#"^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation|Liberation|Injunction) by @@([0-9a-z_-]+)@@$"#)?),
         // bucket: maps
         ("mcreate", Regex::new(r#"^@@([0-9a-z_-]+)@@ created &&([0-9a-z_-]+)&&$"#)?),
         ("mvcreate", Regex::new(r#"^@@([0-9a-z_-]+)@@ created \*\*([0-9a-z_-]+)\*\*$"#)?),
         ("mupdate", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated &&([0-9a-z_-]+)&& to \*\*([0-9a-z_-]+)\*\*$"#)?),
         ("mendo", Regex::new(r#"^@@([0-9a-z_-]+)@@ endorsed &&([0-9a-z_-]+)&&$"#)?),
         ("mrendo", Regex::new(r#"^@@([0-9a-z_-]+)@@ endorsed &&([0-9a-z_-]+)&& instead of &&([0-9a-z_-]+)&&$"#)?),
-        ("munendo", Regex::new(r#"^&&([0-9a-z_-]+)&& lost the endorsement of @@([0-9a-z_-]+)@@$"#)?),
+        ("mlendo", Regex::new(r#"^&&([0-9a-z_-]+)&& lost the endorsement of @@([0-9a-z_-]+)@@$"#)?),
+        ("munendo", Regex::new(r#"^@@([0-9a-z_-]+)@@ removed its endorsement from &&([0-9a-z_-]+)&&$"#)?),
         // bucket: move
         ("move", Regex::new(r#"^@@([0-9a-z_-]+)@@ relocated from %%([0-9a-z_-]+)%% to %%([0-9a-z_-]+)%%$"#)?),
         // bucket: found
@@ -206,11 +214,9 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     // bucket: change
     map.insert("chclass", vec![BucketOrigin, Receptor(1), Data(vec![2,3])].into());
     map.insert("chcensus", vec![BucketOrigin, Receptor(1), Data(vec![2,3])].into());
-    map.insert("chfield", Processor::init(
-        vec![BucketOrigin, Actor(1), Data(vec![2,3])],
-        chfield_ext
-    ));
+    map.insert("chfield", Processor::init(vec![BucketOrigin, Actor(1), Data(vec![2,3])], chfield_ext));
     map.insert("chflag", vec![BucketOrigin, Actor(1)].into());
+    map.insert("nbanner", vec![BucketOrigin, Actor(1)].into());
     map.insert("chbanner", vec![BucketOrigin, Actor(1)].into());
     map.insert("chinf", vec![Receptor(1), Origin(2), Data((3..6).collect())].into());
     map.insert("rvfield", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
@@ -231,6 +237,7 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("eabort", vec![Actor(1), Origin(2), Destination(3)].into());
     map.insert("eufinish", vec![Origin(1), Destination(2)].into());
     map.insert("euclose", vec![Origin(1), Destination(2)].into());
+    map.insert("euabort", vec![Origin(1), Destination(2)].into());
     // bucket: eject
     map.insert("eject", vec![Receptor(1), Origin(2), Actor(3)].into());
     map.insert("banject", vec![Receptor(1), Origin(2), Actor(3)].into());
@@ -272,23 +279,28 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("ldel", vec![Receptor(1), Origin(2)].into());
     map.insert("beginfn", vec![Actor(1), Origin(2)].into());
     map.insert("stopfn", vec![Actor(1), Origin(2)].into());
-    map.insert("finishfn", Processor::init(vec![], finishfn_ext));
+    map.insert("finishfn", Processor::init(vec![], finishfs_ext));
     map.insert("fngovrem", vec![Receptor(1), Origin(2)].into());
     map.insert("beginst", vec![Actor(1), Origin(2)].into());
     map.insert("stopst", vec![Actor(1), Origin(2)].into());
+    map.insert("finishst", Processor::init(vec![], finishfs_ext));
+    map.insert("stgovadd", vec![Receptor(1), Origin(2)].into());
     map.insert("annexreq", Processor::init(vec![Actor(1), Destination(2)], annexreq_ext));
     map.insert("annexrcv", vec![Destination(1), Actor(2), Origin(3)].into());
     map.insert("annexrej", vec![Actor(1), Origin(2), Destination(3)].into());
     map.insert("annexacc", Processor::init(vec![Actor(1), Destination(2)], annexacc_ext));
     map.insert("addxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
     map.insert("remxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
+    map.insert("nscnom", vec![BucketOrigin, Receptor(1), Data(vec![2]), Actor(3)].into());
+    map.insert("rscnom", vec![Origin(1), Data(vec![2]), Actor(3)].into());
     // bucket: maps
     map.insert("mcreate", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("mvcreate", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("mupdate", vec![BucketOrigin, Actor(1), Data(vec![2,3])].into());
     map.insert("mendo", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("mrendo", vec![BucketOrigin, Actor(1), Data(vec![2,3])].into());
-    map.insert("munendo", vec![BucketOrigin, Data(vec![1]), Actor(2)].into());
+    map.insert("mlendo", vec![BucketOrigin, Data(vec![1]), Actor(2)].into());
+    map.insert("munendo", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     // bucket: move
     map.insert("move", vec![Actor(1), Origin(2), Destination(3)].into());
     // bucket: found
@@ -344,7 +356,7 @@ fn chfield_ext(event: &mut Event, captures: Captures<'_>, _: &[&str]) {
     }
 }
 
-fn finishfn_ext(event: &mut Event, captures: Captures<'_>, regions: &[&str]) {
+fn finishfs_ext(event: &mut Event, captures: Captures<'_>, regions: &[&str]) {
     if let Some(matched) = captures.get(1) {
         event.origin = Some(matched.as_str().to_owned());
     } else {
