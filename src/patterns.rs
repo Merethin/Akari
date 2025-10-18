@@ -70,7 +70,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         // bucket: change
         ("chclass", Regex::new(r#"^@@([0-9a-z_-]+)@@ was reclassified from "([A-Za-z -]+)" to "([A-Za-z -]+)"$"#)?),
         ("chcensus", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ranked in the Top (1|5|10)% of the world for (.+)$"#)?),
-        ("chfield", Regex::new(r#"^@@([0-9a-z_-]+)@@ changed its national ([a-z ]+) to "([^"]+)"((?:,? (?:and )?its [a-z ]+ to "[^"]+")+)?$"#)?),
+        ("chfield", Regex::new(r#"^@@([0-9a-z_-]+)@@ changed its national ([a-z ]+) to "([^"]*)"((?:,? (?:and )?its [a-z ]+ to "[^"]*")+)?$"#)?),
         ("chflag", Regex::new(r#"^@@([0-9a-z_-]+)@@ altered its national flag$"#)?),
         ("nbanner", Regex::new(r#"^@@([0-9a-z_-]+)@@ created a custom banner$"#)?),
         ("chbanner", Regex::new(r#"^@@([0-9a-z_-]+)@@ changed a custom banner$"#)?),
@@ -120,7 +120,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("rochange", Regex::new(r#"^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ as (.+) in %%([0-9a-z_-]+)%%$"#)?),
         ("rochname", Regex::new(r#"^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) authority )?(?:from|to) @@([0-9a-z_-]+)@@ and renamed the office from "(.+)" to "(.+)" in %%([0-9a-z_-]+)%%$"#)?),
         ("roremove", Regex::new(r#"^@@([0-9a-z_-]+)@@ dismissed @@([0-9a-z_-]+)@@ as (.+) of %%([0-9a-z_-]+)%%$"#)?),
-        ("roresign", Regex::new(r#"^@@([0-9a-z_-]+)@@ resigned as (.+?) of %%([0-9a-z_-]+)%%$"#)?),
+        ("roresign", Regex::new(r#"^@@([0-9a-z_-]+)@@ resigned as (.+) of %%([0-9a-z_-]+)%%$"#)?),
         ("rgovtset", Regex::new(r#"^@@([0-9a-z_-]+)@@ named the Governor's office  <b>(.+)</b> in %%([0-9a-z_-]+)%%$"#)?),
         ("rgovtupd", Regex::new(r#"^@@([0-9a-z_-]+)@@ renamed the Governor's office from "(.+)" to  <b>(.+)</b> in %%([0-9a-z_-]+)%%$"#)?),
         ("rdelauth", Regex::new(r#"^@@([0-9a-z_-]+)@@ (granted|removed) (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority (?:and removed (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+)*) authority )?(?:from|to) the WA Delegate (?:@@([0-9a-z_-]+)@@ )?in %%([0-9a-z_-]+)%%$"#)?),

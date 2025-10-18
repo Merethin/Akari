@@ -55,7 +55,7 @@ pub struct Event {
 
 **Nation updates its custom fields (chfield)**
 
-`^@@([0-9a-z_-]+)@@ changed its national ([a-z ]+) to "([^"]+)"((?:,? (?:and )?its [a-z ]+ to "[^"]+")+)?$`
+`^@@([0-9a-z_-]+)@@ changed its national ([a-z ]+) to "([^"]*)"((?:,? (?:and )?its [a-z ]+ to "[^"]*")+)?$`
 - actor: first group
 - origin: from `region:` bucket or [unknown]
 - data: second group (field type), third group (field content), parsed from fourth group (extra field types + field content)
@@ -78,7 +78,7 @@ pub struct Event {
 - actor: first group
 - origin: from `region:` bucket or [unknown]
 
-**Nation's influence in a region increases (chinf)**
+**Nation's influence in a region changes (chinf)**
 
 `^@@([0-9a-z_-]+)@@'s influence in %%([0-9a-z_-]+)%% (rose|fell) from "([A-Za-z -]+)" to "([A-Za-z -]+)"$`
 - receptor: first group
@@ -366,7 +366,7 @@ pub struct Event {
 
 **Nation voluntarily resigns from RO position (roresign)**
 
-`^@@([0-9a-z_-]+)@@ resigned as (.+?) of %%([0-9a-z_-]+)%%$`
+`^@@([0-9a-z_-]+)@@ resigned as (.+) of %%([0-9a-z_-]+)%%$`
 - actor: first group
 - origin: third group
 - data: second group (office name)
