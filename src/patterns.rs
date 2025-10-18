@@ -129,7 +129,8 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("nwelcome", Regex::new(r#"^@@([0-9a-z_-]+)@@ composed a new Welcome Telegram for %%([0-9a-z_-]+)%%$"#)?),
         ("rwelcome", Regex::new(r#"^@@([0-9a-z_-]+)@@ canceled the Welcome Telegram of %%([0-9a-z_-]+)%%$"#)?),
         ("rwfe", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated the World Factbook entry in %%([0-9a-z_-]+)%%$"#)?),
-        ("rmapwf", Regex::new(r#"^@@([0-9a-z_-]+)@@ (added|removed) the most supported regional map (?:to|from) the world factbook$"#)?),
+        ("amapwf", Regex::new(r#"^@@([0-9a-z_-]+)@@ added the most supported regional map to the world factbook$"#)?),
+        ("rmapwf", Regex::new(r#"^@@([0-9a-z_-]+)@@ removed the most supported regional map from the world factbook$"#)?),
         ("ndel", Regex::new(r#"^@@([0-9a-z_-]+)@@ became WA Delegate of %%([0-9a-z_-]+)%%$"#)?),
         ("rdel", Regex::new(r#"^@@([0-9a-z_-]+)@@ seized the position of %%([0-9a-z_-]+)%% WA Delegate from @@([0-9a-z_-]+)@@$"#)?),
         ("ldel", Regex::new(r#"^@@([0-9a-z_-]+)@@ lost WA Delegate status in %%([0-9a-z_-]+)%%$"#)?),
@@ -273,7 +274,8 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("nwelcome", vec![Actor(1), Origin(2)].into());
     map.insert("rwelcome", vec![Actor(1), Origin(2)].into());
     map.insert("rwfe", vec![Actor(1), Origin(2)].into());
-    map.insert("rmapwf", vec![Actor(1), Data(vec![2])].into());
+    map.insert("amapwf", vec![BucketOrigin, Actor(1)].into());
+    map.insert("rmapwf", vec![BucketOrigin, Actor(1)].into());
     map.insert("ndel", vec![Receptor(1), Origin(2)].into());
     map.insert("rdel", vec![Receptor(1), Origin(2), Data(vec![3])].into());
     map.insert("ldel", vec![Receptor(1), Origin(2)].into());

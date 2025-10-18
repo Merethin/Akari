@@ -428,13 +428,18 @@ Note: As above, the two spaces there are intentional. NationStates puts two spac
 `^@@([0-9a-z_-]+)@@ updated the World Factbook entry in %%([0-9a-z_-]+)%%$`
 - actor: first group
 - origin: second group
+- 
+**Nation adds the most supported map to the world factbook (amapwf)**
 
-**Nation edits whether the most supported map shows up on the world factbook (rmapwf)**
-
-`^@@([0-9a-z_-]+)@@ (added|removed) the most supported regional map (?:to|from) the world factbook$`
+`^@@([0-9a-z_-]+)@@ added the most supported regional map to the world factbook$`
 - actor: first group
 - origin: from `region:` bucket or [unknown]
-- data: second group (whether it was added or removed)
+
+**Nation removes the most supported map from world factbook (rmapwf)**
+
+`^@@([0-9a-z_-]+)@@ removed the most supported regional map from the world factbook$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
 
 **Nation becomes WA Delegate of a region (ndel)**
 
