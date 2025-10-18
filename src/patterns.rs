@@ -69,7 +69,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("law", Regex::new(r#"^Following new legislation in @@([0-9a-z_-]+)@@, (.+)$"#)?),
         // bucket: change
         ("chclass", Regex::new(r#"^@@([0-9a-z_-]+)@@ was reclassified from "([A-Za-z -]+)" to "([A-Za-z -]+)"$"#)?),
-        ("chcensus", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ranked in the Top (1|5|10)% of the world for (.+)$"#)?),
+        ("chcensus", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ranked in((?:,? (?:and )?the Top (?:1|5|10)% (?:of the world )?for(?:(?:,? (?:and )?(?:(?:[A-Z][A-Za-z-]+ ?)+))*))+)$"#)?),
         ("chfield", Regex::new(r#"^@@([0-9a-z_-]+)@@ changed its national ([a-z ]+) to "([^"]*)"((?:,? (?:and )?its [a-z ]+ to "[^"]*")+)?$"#)?),
         ("chflag", Regex::new(r#"^@@([0-9a-z_-]+)@@ altered its national flag$"#)?),
         ("nbanner", Regex::new(r#"^@@([0-9a-z_-]+)@@ created a custom banner$"#)?),
@@ -214,7 +214,7 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("law", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     // bucket: change
     map.insert("chclass", vec![BucketOrigin, Receptor(1), Data(vec![2,3])].into());
-    map.insert("chcensus", vec![BucketOrigin, Receptor(1), Data(vec![2,3])].into());
+    map.insert("chcensus", Processor::init(vec![BucketOrigin, Receptor(1)], chcensus_ext));
     map.insert("chfield", Processor::init(vec![BucketOrigin, Actor(1), Data(vec![2,3])], chfield_ext));
     map.insert("chflag", vec![BucketOrigin, Actor(1)].into());
     map.insert("nbanner", vec![BucketOrigin, Actor(1)].into());
@@ -339,21 +339,50 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map
 }
 
-fn parse_fields(fields: &str) -> Vec<(String, String)> {
+fn parse_census_labels(data: &str) -> Vec<String> {
+    lazy_static! {
+        static ref RE: Regex = Regex::new(r#"((?:[A-Z][A-Za-z-]+ ?)+)"#).unwrap();
+    }
+
+    RE.captures_iter(data).map(|m| {
+        m[1].trim_end().to_owned()
+    }).collect()
+}
+
+fn parse_census_percentages(data: &str) -> Vec<String> {
+    lazy_static! {
+        static ref RE: Regex = Regex::new(r#"the Top (1|5|10)% (?:of the world )?for((?:,? (?:and )?(?:(?:[A-Z][A-Za-z-]+ ?)+))*)"#).unwrap();
+    }
+
+    RE.captures_iter(data).map(|m| {
+        let mut vec = vec![m[1].to_owned()];
+        vec.append(&mut parse_census_labels(&m[2]));
+        vec
+    }).flatten().collect()
+}
+
+fn chcensus_ext(event: &mut Event, captures: Captures<'_>, _: &[&str]) {
+    if let Some(census) = captures.get(2) {
+        event.data.append(
+            &mut parse_census_percentages(census.as_str())
+        );
+    }
+}
+
+fn parse_fields(fields: &str) -> Vec<String> {
     lazy_static! {
         static ref RE: Regex = Regex::new(r#",? (?:and )?its ([a-z ]+) to "([^"]+)""#).unwrap();
     }
 
     RE.captures_iter(fields).map(|m| {
         (m[1].to_owned(), m[2].to_owned())
-    }).collect()
+    }).flat_map(|(a, b)| [a, b]).collect()
 }
 
 fn chfield_ext(event: &mut Event, captures: Captures<'_>, _: &[&str]) {
     if let Some(extra_fields) = captures.get(4) {
         event.data.append(
             &mut parse_fields(extra_fields.as_str())
-            .into_iter().flat_map(|(a, b)| [a, b]).collect()
         );
     }
 }

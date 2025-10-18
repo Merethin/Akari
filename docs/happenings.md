@@ -48,10 +48,14 @@ pub struct Event {
 
 **Nation achieves a certain census rank (chcensus)**
 
-`^@@([0-9a-z_-]+)@@ was ranked in the Top (1|5|10)% of the world for (.+)$`
+`^@@([0-9a-z_-]+)@@ was ranked in((?:,? (?:and )?the Top (?:1|5|10)% (?:of the world )?for(?:(?:,? (?:and )?(?:(?:[A-Z][A-Za-z-]+ ?)+))*))+)$`
 - receptor: first group
 - origin: from `region:` bucket or [unknown]
-- data: second group (rank percentage), third group (rank label)
+- data: parsed from second group (below)
+
+Subexpressions:
+- `the Top (1|5|10)% (?:of the world )?for((?:,? (?:and )?(?:(?:[A-Z][A-Za-z-]+ ?)+))*)` to parse each rank percentage (first group: rank percentage, second group: rank names, parsed below)
+- `((?:[A-Z][A-Za-z-]+ ?)+)` to parse each rank name (first group: name, strip trailing whitespace)
 
 **Nation updates its custom fields (chfield)**
 
@@ -59,6 +63,9 @@ pub struct Event {
 - actor: first group
 - origin: from `region:` bucket or [unknown]
 - data: second group (field type), third group (field content), parsed from fourth group (extra field types + field content)
+
+Subexpressions:
+- `,? (?:and )?its ([a-z ]+) to "([^"]+)"` to parse each custom field name and value (first group: name, second group: value)
 
 **Nation updates its flag (chflag)**
 
@@ -330,7 +337,10 @@ pub struct Event {
 - actor: first group
 - receptor: second group
 - origin: fifth group
-- data: office name (third group), authority (parsed from fourth group)
+- data: office name (third group), authority (parsed from fourth group below)
+
+Subexpressions:
+- `</i>([A-Z])` to parse each authority letter (letter: first group)
 
 **Governor/Delegate renames a nation's RO position (rorename)**
 
@@ -346,7 +356,10 @@ pub struct Event {
 - actor: first group
 - receptor: fifth group
 - origin: seventh group
-- data: granted authority (parsed from third group if second group is "granted"), removed authority (parsed from third group if second group is "removed", or fourth group if it exists), office name (sixth group)
+- data: granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists), office name (sixth group)
+
+Subexpressions:
+- `</i>([A-Z])` to parse each authority letter (letter: first group)
 
 **Governor/Delegate changes a nation's RO authority and position title (rochname)**
 
@@ -354,7 +367,10 @@ pub struct Event {
 - actor: first group
 - receptor: fifth group
 - origin: eighth group
-- data: granted authority (parsed from third group if second group is "granted"), removed authority (parsed from third group if second group is "removed", or fourth group if it exists), old office name (sixth group), new office name (seventh group)
+- data: granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists), old office name (sixth group), new office name (seventh group)
+
+Subexpressions:
+- `</i>([A-Z])` to parse each authority letter (letter: first group)
 
 **Governor/Delegate dismisses a RO (roremove)**
 
@@ -395,7 +411,10 @@ Note: As above, the two spaces there are intentional. NationStates puts two spac
 - actor: first group
 - receptor: fifth group, if applicable
 - origin: sixth group
-- data: granted authority (parsed from third group if second group is "granted"), removed authority (parsed from third group if second group is "removed", or fourth group if it exists)
+- data: granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists)
+
+Subexpressions:
+- `</i>([A-Z])` to parse each authority letter (letter: first group)
 
 **Nation ascends to Governor position following an abdication or CTE (rnewgov)**
 
@@ -697,7 +716,10 @@ Yes, this is functionally the same as the above. Why it needs to exist, I don't 
 
 `^The (General Assembly|Security Council) proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) entered the resolution voting floor$`
 - receptor: third group (author)
-- data: chamber (first group), proposal name (second group), coauthors (parsed from fourth group)
+- data: chamber (first group), proposal name (second group), coauthors (parsed from fourth group below)
+
+Subexpressions:
+- `@@([0-9a-z_-]+)@@` to parse coauthors (name: first group)
 
 **WA resolution is passed (rspass)**
 
