@@ -37,28 +37,29 @@ For an example of how to configure each of these outputs, check the default [aka
 
 A normal NationStates happening line looks like this:
 
-`@@maxtopia@@ voted against the World Assembly Resolution "Condemn Testregionia"`
+`@@testlandia@@ changed its national currency to "MaxCoin" and its leader to "Jennifer Government"`
 
-We know which rough category of events it belongs to, and that's about it. If you really want to, you can extract the additional information from the line.
+We know which rough category of events it belongs to (the "Change" category), and that's about it. If you really want to, you can extract some additional information from the line.
 
 With Akari, it's all done for you: 
 ```
 {
     "event_id": 123123123,
-    "timestamp": 246246246,
-    "line": "@@maxtopia@@ voted against the World Assembly Resolution \"Condemn Testregionia\"",
-    "actor": "maxtopia",
+    "time": 123123123,
+    "line": "@@testlandia@@ changed its national currency to \"MaxCoin\" and its leader to \"Jennifer Government\"","actor": "testlandia",
     "origin": "testregionia",
-    "category": "wavote",
-    "data": ["against", "Condemn Testregionia"]
+    "category": "chfield",
+    "data": [
+        "currency","MaxCoin","leader","Jennifer Government"
+    ]
 }
 ```
 
-Look at that "category" value. That's not the same as the NS "Vote" category - this category represents the unique event "voting on the current WA resolution". "Withdrawing a vote on the current WA resolution", also in the NS "Vote" category, has a separate category ID - "wrvote" in this case (short for "WA Add Vote" and "WA Remove Vote").
+Look at that "category" value - "chfield" represents the unique event "a nation changes its custom fields". Each unique happening has its own category, which allows for more fine-grained filtering than what NationStates filters allow you to do. Want to listen to delegacy changes but don't want the other fluff from "Admin"? Just filter for "ndel" (new delegate), "ldel" (delegacy lost) and "rdel" (delegacy seized / replaced).
 
 For a complete list of category IDs parsed by Akari as well as the regex patterns used to parse them, check [docs/happenings.md](docs/happenings.md).
 
-There is more structured data. We can see the person who performed this action, the "actor", is extracted from the happening. The vote as well as the proposal name are in the "data" array. And the region this event originated in is stored in the "origin" field (this is not extracted from the happening line, but from a separate field provided by SSE).
+There is more structured data. We can see the person who performed this action, the "actor", is extracted from the happening. The custom fields changed, as well as their values, are in the "data" array. And the region this happening originated in is stored in the "origin" field (this is not extracted from the happening line, but from a separate field provided by SSE).
 
 ## Setup
 
