@@ -447,7 +447,7 @@ Subexpressions:
 `^@@([0-9a-z_-]+)@@ updated the World Factbook entry in %%([0-9a-z_-]+)%%$`
 - actor: first group
 - origin: second group
-- 
+
 **Nation adds the most supported map to the world factbook (amapwf)**
 
 `^@@([0-9a-z_-]+)@@ added the most supported regional map to the world factbook$`
