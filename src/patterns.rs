@@ -175,6 +175,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         // bucket: resolution
         ("rsfloor", Regex::new(r#"^The (General Assembly|Security Council) proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) entered the resolution voting floor$"#)?),
         ("rspass", Regex::new(r#"^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)$"#)?),
+        ("nrspass", Regex::new(r#"^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$"#)?),
         ("rsfail", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$"#)?),
         ("rsapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ approved the World Assembly proposal "(.+)"$"#)?),
         ("rsremapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its approval for the World Assembly proposal "(.+)"$"#)?),
@@ -318,6 +319,7 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     // bucket: resolution
     map.insert("rsfloor", Processor::init(vec![Data(vec![1,2]), Receptor(3)], rsfloor_ext));
     map.insert("rspass", Processor::init(vec![Data(vec![1,2,3])], rspass_ext));
+    map.insert("nrspass", vec![Receptor(1), Data(vec![4,2,3])].into());
     map.insert("rsfail", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
     map.insert("rsapp", vec![Actor(1), Data(vec![2])].into());
     map.insert("rsremapp", vec![Actor(1), Data(vec![2])].into());

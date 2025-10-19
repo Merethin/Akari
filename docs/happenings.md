@@ -726,6 +726,12 @@ Subexpressions:
 `^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)$`
 - data: chamber (first group), resolution id (second group), proposal name (third group), votes for (fourth group), votes against (fifth group)
 
+**Nation's WA resolution is passed (nrspass)**
+
+`^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$`
+- receptor: first group
+- data: chamber (fourth group), resolution id (second group), proposal name (third group)
+
 **WA proposal fails at vote (rsfail)**
 
 `^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$`
