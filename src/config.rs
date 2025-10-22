@@ -39,6 +39,8 @@ pub struct ConsoleConfig {
 pub struct FileConfig {
     pub enabled: bool,
     pub path: Option<String>,
+    pub maxfiles: Option<usize>,
+    pub threshold: Option<usize>,
     pub include: Option<Vec<String>>,
     pub exclude: Option<Vec<String>>,
 }

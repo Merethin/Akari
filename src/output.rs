@@ -1,8 +1,9 @@
-use std::{fs::{File, OpenOptions}, io::Write, process::exit};
+use std::{io::Write, process::exit};
 
 use lapin::{options::{BasicPublishOptions, ConfirmSelectOptions, ExchangeDeclareOptions}, types::FieldTable, BasicProperties};
 use log::{error, info, warn};
 use redis_om::{redis, JsonModel};
+use file_rotate::{FileRotate, ContentLimit, suffix::{AppendTimestamp, FileLimit}, compression::Compression};
 
 use crate::{config::{Config, RabbitMQConfig, RedisConfig}, events::Event};
 
@@ -10,7 +11,7 @@ pub struct OutputChannels {
     config: Config,
     redis: Option<redis_om::redis::aio::Connection>,
     console: Option<()>,
-    file: Option<File>,
+    file: Option<FileRotate<AppendTimestamp>>,
     rmq: Option<lapin::Channel>,
 }
 
@@ -134,17 +135,21 @@ pub async fn initialize_outputs(config: &Config) -> Result<OutputChannels, Box<d
 
     if let Some(file_config) = &config.output.file
         && file_config.enabled {
-            let file = OpenOptions::new()
-                            .append(true)
-                            .create(true)
-                            .open(file_config.path.clone().unwrap_or_else(|| {
-                                error!("File output was enabled but no path was set");
-                                exit(1);
-                            }))
-                            .map_err(|err| {
-                                error!("Failed to open output file: {err}");
-                                err
-                            })?;
+            let file = 
+                FileRotate::new(file_config.path.clone().unwrap_or_else(|| {
+                    error!("File output was enabled but no path was set");
+                    exit(1);
+                }), 
+                AppendTimestamp::default(
+                    file_config.maxfiles.map_or(
+                        FileLimit::Unlimited, |limit| FileLimit::MaxFiles(limit)
+                    )
+                ), 
+                ContentLimit::Bytes(
+                    file_config.threshold.unwrap_or(100) * 1024 * 1024
+                ), 
+                Compression::OnRotate(0), 
+                None);
 
             channels.file = Some(file);
         }
