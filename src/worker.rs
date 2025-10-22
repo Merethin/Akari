@@ -49,7 +49,6 @@ pub fn spawn_work_threads(mut outputs: OutputChannels, worker_count: usize)
                         let mut result = Event::new(
                             -1, 
                             event.time, 
-                            event.line.as_str(), 
                             event.category
                         );
 

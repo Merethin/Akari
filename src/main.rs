@@ -134,7 +134,7 @@ async fn main_loop(
         drop(connection);
 
         sender.send(sequenced(Message::System(
-            SystemEvent::connection_dropped(now())
+            SystemEvent::connection_dropped(now(), last_event_id.unwrap_or(-1))
         ))).unwrap_or_else(|err| {
             error!("Failed to send system event to worker: {err}");
         });

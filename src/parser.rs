@@ -47,8 +47,8 @@ fn process_regex_match(
 ) -> Option<Event> {
     let Some(processor) = happenings.map.get(event.category.as_str()) else {
         warn!(
-            "Happening line '{}' matched category '{}' which doesn't have an associated processor", 
-            event.line, event.category
+            "Happening {} matched category '{}' which doesn't have an associated processor", 
+            event.event, event.category
         );
 
         return None;
@@ -81,8 +81,7 @@ pub fn handle_server_message(
 
             let event = Event::new(
                 evt.id.parse().unwrap_or(-1), 
-                evt.time, 
-                line, 
+                evt.time,
                 category
             );
 

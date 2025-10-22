@@ -25,7 +25,7 @@ Akari is multithreaded - it uses one thread to read SSE events from NS, one to b
 Currently, there are 4 implemented output sources, each of which can be enabled or disabled separately and assigned an `include` list (to only broadcast certain events to that output) or an `exclude` list (to exclude certain events from being broadcast to that output).
 
 - `console` - Prints events to stderr.
-- `file` - Writes events to a log file.
+- `file` - Writes events to a log file. Rotates log files after they reach a certain length and compresses older ones.
 - `redis` - Saves events to a Redis instance (using an indexed, searchable model).
 - `rmq` - Broadcasts events to a RabbitMQ instance. Specifically, it broadcasts to a topic exchange (the exchange name can be configured in `akari.toml`). Applications can bind their queues to `*` or `#` to receive all events or bind to each category they want to listen to (categories are listed in [docs/happenings.md](docs/happenings.md)).
 
@@ -44,9 +44,9 @@ We know which rough category of events it belongs to (the "Change" category), an
 With Akari, it's all done for you: 
 ```
 {
-    "event_id": 123123123,
+    "event": 123123123,
     "time": 123123123,
-    "line": "@@testlandia@@ changed its national currency to \"MaxCoin\" and its leader to \"Jennifer Government\"","actor": "testlandia",
+    "actor": "testlandia",
     "origin": "testregionia",
     "category": "chfield",
     "data": [
