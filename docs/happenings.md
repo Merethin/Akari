@@ -732,9 +732,14 @@ Subexpressions:
 - receptor: first group
 - data: chamber (fourth group), resolution id (second group), proposal name (third group)
 
-**WA proposal fails at vote (rsfail)**
+**WA resolution fails at vote (rsfail)**
 
 `^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$`
+- data: chamber (first group), proposal name (second group), votes for (third group), votes against (fourth group)
+
+**WA resolution is discarded at vote (rdiscard)**
+
+`^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$`
 - data: chamber (first group), proposal name (second group), votes for (third group), votes against (fourth group)
 
 **Delegate approves WA proposal (rsapp)**

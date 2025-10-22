@@ -177,6 +177,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("rspass", Regex::new(r#"^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)$"#)?),
         ("nrspass", Regex::new(r#"^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$"#)?),
         ("rsfail", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$"#)?),
+        ("rdiscard", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$"#)?),
         ("rsapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ approved the World Assembly proposal "(.+)"$"#)?),
         ("rsremapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its approval for the World Assembly proposal "(.+)"$"#)?),
         ("rssubmit", Regex::new(r#"^@@([0-9a-z_-]+)@@ submitted a proposal to the (General Assembly|Security Council) (.+) Board entitled "(.+)"$"#)?),
@@ -321,6 +322,7 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("rspass", Processor::init(vec![Data(vec![1,2,3])], rspass_ext));
     map.insert("nrspass", vec![Receptor(1), Data(vec![4,2,3])].into());
     map.insert("rsfail", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
+    map.insert("rdiscard", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
     map.insert("rsapp", vec![Actor(1), Data(vec![2])].into());
     map.insert("rsremapp", vec![Actor(1), Data(vec![2])].into());
     map.insert("rssubmit", vec![Actor(1), Data(vec![2,3,4])].into());
