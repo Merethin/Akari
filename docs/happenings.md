@@ -581,21 +581,6 @@ Yes, this is functionally the same as the above. Why it needs to exist, I don't 
 - origin: second group
 - data: third group (nation group previously allowed to post)
 
-**Nation is nominated in a Security Council proposal (nscnom)**
-
-`^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$`
-- actor: third group
-- receptor: first group
-- origin: from `region:` bucket or [unknown]
-- data: second group (proposal type)
-
-**Region is nominated in a Security Council proposal (rscnom)**
-
-`^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation|Liberation|Injunction) by @@([0-9a-z_-]+)@@$`
-- actor: third group
-- origin: first group
-- data: second group (proposal type)
-
 ## bucket: maps
 
 **Nation creates a new map (mcreate)**
@@ -853,6 +838,40 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 - actor: first group
 - origin: second group
 - data: third group (poll title)
+
+**Nation is kicked from a region by moderation (modkick)**
+
+`^@@([0-9a-z_-]+)@@ was removed from %%([0-9a-z_-]+)%% by moderation$`
+- receptor: first group
+- origin: second group
+
+**Nation is nominated in a Security Council proposal (nscnom)**
+
+`^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$`
+- actor: third group
+- receptor: first group
+- origin: from `region:` bucket or [unknown]
+- data: second group (proposal type)
+
+**Region is nominated in a Security Council proposal (rscnom)**
+
+`^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation|Liberation|Injunction) by @@([0-9a-z_-]+)@@$`
+- actor: third group
+- origin: first group
+- data: second group (proposal type)
+
+**A SC proposal nominating a nation passes (nscpass)**
+
+`^@@([0-9a-z_-]+)@@ was (commended|condemned) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$`
+- receptor: first group
+- origin: from `region:` bucket or [unknown]
+- data: second group (resolution type), third group (resolution id)
+
+**A SC proposal nominating a region passes (rscpass)**
+
+`^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$`
+- origin: first group
+- data: second group (resolution type), third group (resolution id)
 
 # System events
 

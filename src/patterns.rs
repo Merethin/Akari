@@ -150,8 +150,6 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("annexacc", Regex::new(r#"^@@([0-9a-z_-]+)@@ accepted a demand to be annexed by %%([0-9a-z_-]+)%%$"#)?),
         ("addxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ granted posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board to ([a-zA-Z ]+) in embassy regions$"#)?),
         ("remxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ revoked posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board from ([a-zA-Z ]+) in embassy regions$"#)?),
-        ("nscnom", Regex::new(r#"^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
-        ("rscnom", Regex::new(r#"^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation|Liberation|Injunction) by @@([0-9a-z_-]+)@@$"#)?),
         // bucket: maps
         ("mcreate", Regex::new(r#"^@@([0-9a-z_-]+)@@ created &&([0-9a-z_-]+)&&$"#)?),
         ("mvcreate", Regex::new(r#"^@@([0-9a-z_-]+)@@ created \*\*([0-9a-z_-]+)\*\*$"#)?),
@@ -175,7 +173,6 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         // bucket: resolution
         ("rsfloor", Regex::new(r#"^The (General Assembly|Security Council) proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) entered the resolution voting floor$"#)?),
         ("rspass", Regex::new(r#"^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)$"#)?),
-        ("nrspass", Regex::new(r#"^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$"#)?),
         ("rsfail", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$"#)?),
         ("rdiscard", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$"#)?),
         ("rsapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ approved the World Assembly proposal "(.+)"$"#)?),
@@ -194,6 +191,12 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         // bucket: all
         ("govabd", Regex::new(r#"^Governor @@([0-9a-z_-]+)@@ abdicated$"#)?),
         ("npoll", Regex::new(r#"^@@([0-9a-z_-]+)@@ created a new poll in %%([0-9a-z_-]+)%%: "(.+)"$"#)?),
+        ("modkick", Regex::new(r#"^@@([0-9a-z_-]+)@@ was removed from %%([0-9a-z_-]+)%% by moderation$"#)?),
+        ("nrspass", Regex::new(r#"^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$"#)?),
+        ("nscnom", Regex::new(r#"^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
+        ("rscnom", Regex::new(r#"^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation|Liberation|Injunction) by @@([0-9a-z_-]+)@@$"#)?),
+        ("nscpass", Regex::new(r#"^@@([0-9a-z_-]+)@@ was (commended|condemned) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
+        ("rscpass", Regex::new(r#"^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
     ];
 
     let set = RegexSet::new(
@@ -295,8 +298,6 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("annexacc", Processor::init(vec![Actor(1), Destination(2)], annexacc_ext));
     map.insert("addxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
     map.insert("remxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
-    map.insert("nscnom", vec![BucketOrigin, Receptor(1), Data(vec![2]), Actor(3)].into());
-    map.insert("rscnom", vec![Origin(1), Data(vec![2]), Actor(3)].into());
     // bucket: maps
     map.insert("mcreate", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("mvcreate", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
@@ -320,7 +321,6 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     // bucket: resolution
     map.insert("rsfloor", Processor::init(vec![Data(vec![1,2]), Receptor(3)], rsfloor_ext));
     map.insert("rspass", Processor::init(vec![Data(vec![1,2,3])], rspass_ext));
-    map.insert("nrspass", vec![Receptor(1), Data(vec![4,2,3])].into());
     map.insert("rsfail", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
     map.insert("rdiscard", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
     map.insert("rsapp", vec![Actor(1), Data(vec![2])].into());
@@ -339,6 +339,12 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     // bucket: all
     map.insert("govabd", vec![BucketOrigin, Actor(1)].into());
     map.insert("npoll", vec![Actor(1), Origin(2), Data(vec![3])].into());
+    map.insert("modkick", vec![Receptor(1), Origin(2)].into());
+    map.insert("nrspass", vec![Receptor(1), Data(vec![4,2,3])].into());
+    map.insert("nscnom", vec![BucketOrigin, Receptor(1), Data(vec![2]), Actor(3)].into());
+    map.insert("rscnom", vec![Origin(1), Data(vec![2]), Actor(3)].into());
+    map.insert("nscpass", vec![BucketOrigin, Receptor(1), Data(vec![2, 3])].into());
+    map.insert("rscpass", vec![Origin(1), Data(vec![2, 3])].into());
 
     map
 }

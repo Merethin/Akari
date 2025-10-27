@@ -14,7 +14,7 @@ include = ["move"]
 enabled = true
 path = "akari.log"
 maxfiles = 5
-threshold = 50
+threshold = 500
 exclude = ["law", "rupdate"]
 
 [output.rmq]

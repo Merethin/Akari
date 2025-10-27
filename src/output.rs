@@ -144,10 +144,10 @@ pub async fn initialize_outputs(config: &Config) -> Result<OutputChannels, Box<d
                         FileLimit::Unlimited, |limit| FileLimit::MaxFiles(limit)
                     )
                 ), 
-                ContentLimit::Bytes(
-                    file_config.threshold.unwrap_or(100) * 1024 * 1024
+                ContentLimit::Lines(
+                    file_config.threshold.unwrap_or(500) * 1000
                 ), 
-                Compression::OnRotate(0), 
+                Compression::OnRotate(0),
                 None);
 
             channels.file = Some(file);
