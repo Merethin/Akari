@@ -281,6 +281,12 @@ Subexpressions:
 `^%%([0-9a-z_-]+)%% became the Featured Region of the day$`
 - origin: first group
 
+**Region becomes the featured map (rmapfeat)**
+
+`^%%([0-9a-z_-]+)%% became the Featured Map of the day with &&([0-9a-z_-]+)&&$`
+- origin: first group
+- data: second group (map ID)
+
 **Nation founds region (rfound)**
 
 `^@@([0-9a-z_-]+)@@ founded the region %%([0-9a-z_-]+)%%$`
@@ -862,7 +868,7 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 
 **Region is targeted in a Security Council proposal (rsctg)**
 
-`%%([0-9a-z_-]+)%% was targeted for (Liberation|Injunction) in a World Assembly proposal by @@([0-9a-z_-]+)@@`
+`^%%([0-9a-z_-]+)%% was targeted for (Liberation|Injunction) in a World Assembly proposal by @@([0-9a-z_-]+)@@$`
 - actor: third group
 - origin: first group
 - data: second group (proposal type)

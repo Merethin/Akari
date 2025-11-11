@@ -107,6 +107,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("rmpw", Regex::new(r#"^@@([0-9a-z_-]+)@@ removed regional password protection from %%([0-9a-z_-]+)%%$"#)?),
         ("rupdate", Regex::new(r#"^%%([0-9a-z_-]+)%% updated$"#)?),
         ("rfeature", Regex::new(r#"^%%([0-9a-z_-]+)%% became the Featured Region of the day$"#)?),
+        ("rmapfeat", Regex::new(r#"^%%([0-9a-z_-]+)%% became the Featured Map of the day with &&([0-9a-z_-]+)&&$"#)?),
         ("rfound", Regex::new(r#"^@@([0-9a-z_-]+)@@ founded the region %%([0-9a-z_-]+)%%$"#)?),
         ("srbanner", Regex::new(r#"^@@([0-9a-z_-]+)@@ set the regional banner of %%([0-9a-z_-]+)%%$"#)?),
         ("crbanner", Regex::new(r#"^@@([0-9a-z_-]+)@@ changed the regional banner of %%([0-9a-z_-]+)%%$"#)?),
@@ -195,7 +196,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("nrspass", Regex::new(r#"^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$"#)?),
         ("nscnom", Regex::new(r#"^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
         ("rscnom", Regex::new(r#"^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
-        ("rsctg", Regex::new(r#"%%([0-9a-z_-]+)%% was targeted for (Liberation|Injunction) in a World Assembly proposal by @@([0-9a-z_-]+)@@"#)?),
+        ("rsctg", Regex::new(r#"^%%([0-9a-z_-]+)%% was targeted for (Liberation|Injunction) in a World Assembly proposal by @@([0-9a-z_-]+)@@$"#)?),
         ("nscpass", Regex::new(r#"^@@([0-9a-z_-]+)@@ was (commended|condemned) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
         ("rscpass", Regex::new(r#"^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
     ];
@@ -258,6 +259,7 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("rmpw", vec![Actor(1), Origin(2)].into());
     map.insert("rupdate", vec![Origin(1)].into());
     map.insert("rfeature", vec![Origin(1)].into());
+    map.insert("rmapfeat", vec![Origin(1), Data(vec![2])].into());
     map.insert("rfound", vec![Actor(1), Origin(2)].into());
     map.insert("srbanner", vec![Actor(1), Origin(2)].into());
     map.insert("crbanner", vec![Actor(1), Origin(2)].into());
