@@ -194,7 +194,8 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("modkick", Regex::new(r#"^@@([0-9a-z_-]+)@@ was removed from %%([0-9a-z_-]+)%% by moderation$"#)?),
         ("nrspass", Regex::new(r#"^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$"#)?),
         ("nscnom", Regex::new(r#"^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
-        ("rscnom", Regex::new(r#"^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation|Liberation|Injunction) by @@([0-9a-z_-]+)@@$"#)?),
+        ("rscnom", Regex::new(r#"^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
+        ("rsctg", Regex::new(r#"%%([0-9a-z_-]+)%% was targeted for (Liberation|Injunction) in a World Assembly proposal by @@([0-9a-z_-]+)@@"#)?),
         ("nscpass", Regex::new(r#"^@@([0-9a-z_-]+)@@ was (commended|condemned) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
         ("rscpass", Regex::new(r#"^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
     ];
@@ -343,6 +344,7 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("nrspass", vec![Receptor(1), Data(vec![4,2,3])].into());
     map.insert("nscnom", vec![BucketOrigin, Receptor(1), Data(vec![2]), Actor(3)].into());
     map.insert("rscnom", vec![Origin(1), Data(vec![2]), Actor(3)].into());
+    map.insert("rsctg", vec![Origin(1), Data(vec![2]), Actor(3)].into());
     map.insert("nscpass", vec![BucketOrigin, Receptor(1), Data(vec![2, 3])].into());
     map.insert("rscpass", vec![Origin(1), Data(vec![2, 3])].into());
 

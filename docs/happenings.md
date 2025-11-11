@@ -855,7 +855,14 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 
 **Region is nominated in a Security Council proposal (rscnom)**
 
-`^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation|Liberation|Injunction) by @@([0-9a-z_-]+)@@$`
+`^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$`
+- actor: third group
+- origin: first group
+- data: second group (proposal type)
+
+**Region is targeted in a Security Council proposal (rsctg)**
+
+`%%([0-9a-z_-]+)%% was targeted for (Liberation|Injunction) in a World Assembly proposal by @@([0-9a-z_-]+)@@`
 - actor: third group
 - origin: first group
 - data: second group (proposal type)
@@ -873,6 +880,10 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 - origin: first group
 - data: second group (resolution type), third group (resolution id)
 
+# Unmatched events
+
+A happening that does not match any of the above regex patterns will be sent as an event with the category "**unknown**", and the happening line verbatim in the data array. The happening ID and timestamp are preserved as well. Do report any events marked as "unknown" to me so I can add them to this list!
+
 # System events
 
 These are not emitted by NationStates but by Akari itself.
@@ -883,20 +894,15 @@ These events always have an event ID of -1.
 
 **Connection to NationStates established / reestablished (conninit)**
 
-`^System: Connection to NationStates initialized / resumed$`
-
 **Connection to NationStates lost (conndrop)**
 
-`^System: Connection to NationStates lost$`
+- data: first group (last event id received before disconnection)
 
 **Missed events from NationStates (connmiss)**
 
-`^System: ([0-9]+) NationStates events missed \(from ([0-9]+) to ([0-9]+)\)$`
 - data: first group (number of events missed), second group (last event ID received before the missed events), third group (first event ID received after the missed events)
 
 Typically emitted just after a `conninit` event when the connection has been successfully reestablished after being lost for a period of time.
-
-The regex pattern is included for convenience; you shouldn't need it as Akari already gives you the parsed fields.
 
 ## Utility
 
