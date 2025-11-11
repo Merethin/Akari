@@ -69,7 +69,15 @@ pub fn handle_server_message(
 
     if !matches.matched_any() {
         warn!("Unmatched happening line: {}", line);
-        return None;
+
+        let mut event = Event::new(
+            evt.id.parse().unwrap_or(-1), 
+            evt.time,
+            "unknown"
+        );
+        
+        event.data.push(line.to_owned());
+        return Some(event);
     }
 
     // next().unwrap() should never fail as the !matched_any() case was already handled above
