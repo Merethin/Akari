@@ -205,12 +205,12 @@ async fn read_and_parse_messages(
             let e = match err.downcast::<reqwest::Error>() {
                 Ok(req_err) => {
                     if req_err.is_timeout() {
-                        warn!("Read from NationStates timed out");
+                        warn!("Read from NationStates timed out: {}", req_err);
                         return Ok(vec![ReadMessageResult::ResponseError]);
                     }
 
                     if req_err.is_decode() {
-                        warn!("Error decoding response from NationStates");
+                        warn!("Error decoding response from NationStates: {}", req_err);
                         return Ok(vec![ReadMessageResult::ResponseError]);
                     }
 
