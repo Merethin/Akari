@@ -46,10 +46,12 @@ fn process_regex_match(
     happenings: &Happenings,
 ) -> Option<Event> {
     let Some(processor) = happenings.map.get(event.category.as_str()) else {
-        warn!(
-            "Happening {} matched category '{}' which doesn't have an associated processor", 
-            event.event, event.category
-        );
+        if !event.category.contains("skip") {
+            warn!(
+                "Happening {} matched category '{}' which doesn't have an associated processor", 
+                event.event, event.category
+            );
+        }
 
         return None;
     };

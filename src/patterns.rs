@@ -138,17 +138,21 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("beginfn", Regex::new(r#"^@@([0-9a-z_-]+)@@ began the process of converting %%([0-9a-z_-]+)%% to a Frontier$"#)?),
         ("stopfn", Regex::new(r#"^@@([0-9a-z_-]+)@@ canceled the process of converting %%([0-9a-z_-]+)%% to a Frontier$"#)?),
         ("finishfn", Regex::new(r#"^%%([0-9a-z_-]+)%% became a Frontier$"#)?),
-        ("finishfn", Regex::new(r#"^Became a Frontier$"#)?),
+        ("skip1", Regex::new(r#"^Became a Frontier$"#)?),
         ("fngovrem", Regex::new(r#"^@@([0-9a-z_-]+)@@ stepped down as Governor of %%([0-9a-z_-]+)%% as it became a Frontier$"#)?),
         ("beginst", Regex::new(r#"^@@([0-9a-z_-]+)@@ began the process of removing %%([0-9a-z_-]+)%%'s designation as a Frontier$"#)?),
         ("stopst", Regex::new(r#"^@@([0-9a-z_-]+)@@ canceled the process of removing %%([0-9a-z_-]+)%%'s designation as a Frontier$"#)?),
         ("finishst", Regex::new(r#"^%%([0-9a-z_-]+)%% ceased to operate as a Frontier$"#)?),
-        ("finishst", Regex::new(r#"^Ceased to operate as a Frontier$"#)?),
+        ("skip2", Regex::new(r#"^Ceased to operate as a Frontier$"#)?),
         ("stgovadd", Regex::new(r#"^@@([0-9a-z_-]+)@@ became Governor of %%([0-9a-z_-]+)%%$"#)?),
         ("annexreq", Regex::new(r#"^@@([0-9a-z_-]+)@@ sent a demand to annex %%([0-9a-z_-]+)%%$"#)?),
         ("annexrcv", Regex::new(r#"^%%([0-9a-z_-]+)%% received a demand from @@([0-9a-z_-]+)@@ to be annexed by %%([0-9a-z_-]+)%%$"#)?),
         ("annexrej", Regex::new(r#"^@@([0-9a-z_-]+)@@ rejected a demand for %%([0-9a-z_-]+)%% to be annexed into %%([0-9a-z_-]+)%%$"#)?),
         ("annexacc", Regex::new(r#"^@@([0-9a-z_-]+)@@ accepted a demand to be annexed by %%([0-9a-z_-]+)%%$"#)?),
+        ("annexfna", Regex::new(r#"^%%([0-9a-z_-]+)%% was annexed by %%([0-9a-z_-]+)%%$"#)?),
+        ("skip3", Regex::new(r#"^Annexed by %%([0-9a-z_-]+)%%$"#)?),
+        ("annexfnb", Regex::new(r#"^%%([0-9a-z_-]+)%% annexed %%([0-9a-z_-]+)%%$"#)?),
+        ("skip4", Regex::new(r#"^Annexed %%([0-9a-z_-]+)%%$"#)?),
         ("addxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ granted posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board to ([a-zA-Z ]+) in embassy regions$"#)?),
         ("remxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ revoked posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board from ([a-zA-Z ]+) in embassy regions$"#)?),
         // bucket: maps
@@ -289,16 +293,18 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("ldel", vec![Receptor(1), Origin(2)].into());
     map.insert("beginfn", vec![Actor(1), Origin(2)].into());
     map.insert("stopfn", vec![Actor(1), Origin(2)].into());
-    map.insert("finishfn", Processor::init(vec![], finishfs_ext));
+    map.insert("finishfn", vec![Origin(1)].into());
     map.insert("fngovrem", vec![Receptor(1), Origin(2)].into());
     map.insert("beginst", vec![Actor(1), Origin(2)].into());
     map.insert("stopst", vec![Actor(1), Origin(2)].into());
-    map.insert("finishst", Processor::init(vec![], finishfs_ext));
+    map.insert("finishst", vec![Origin(1)].into());
     map.insert("stgovadd", vec![Receptor(1), Origin(2)].into());
     map.insert("annexreq", Processor::init(vec![Actor(1), Destination(2)], annexreq_ext));
     map.insert("annexrcv", vec![Destination(1), Actor(2), Origin(3)].into());
     map.insert("annexrej", vec![Actor(1), Origin(2), Destination(3)].into());
     map.insert("annexacc", Processor::init(vec![Actor(1), Destination(2)], annexacc_ext));
+    map.insert("annexfna", vec![Origin(1), Destination(2)].into());
+    map.insert("annexfnb", vec![Origin(1), Destination(2)].into());
     map.insert("addxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
     map.insert("remxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
     // bucket: maps
@@ -398,14 +404,6 @@ fn chfield_ext(event: &mut Event, captures: Captures<'_>, _: &[&str]) {
         event.data.append(
             &mut parse_fields(extra_fields.as_str())
         );
-    }
-}
-
-fn finishfs_ext(event: &mut Event, captures: Captures<'_>, regions: &[&str]) {
-    if let Some(matched) = captures.get(1) {
-        event.origin = Some(matched.as_str().to_owned());
-    } else {
-        event.origin = Some(regions.first().unwrap_or(&"[unknown]").to_string());
     }
 }
 

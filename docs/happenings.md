@@ -502,12 +502,11 @@ Subexpressions:
 `^%%([0-9a-z_-]+)%% became a Frontier$`
 - origin: first group
 
-**Region becomes a Frontier (finishfn)**
+**Region converts to a Frontier (SKIPPED)**
 
 `^Became a Frontier$`
-- origin: from `region:` bucket or [unknown]
 
-Yes, this is functionally the same as the above. Why it needs to exist, I don't know.
+This happening is skipped by Akari as it is generated at the same time as the above happening which describes the same event and provides more information.
 
 **Governor removed from office when converting to a Frontier (fngovrem)**
 
@@ -532,12 +531,11 @@ Yes, this is functionally the same as the above. Why it needs to exist, I don't 
 `^%%([0-9a-z_-]+)%% ceased to operate as a Frontier$`
 - origin: first group
 
-**Region converts to a Stronghold (finishst)**
+**Region converts to a Stronghold (SKIPPED)**
 
 `^Ceased to operate as a Frontier$`
-- origin: from `region:` bucket or [unknown]
 
-Yes, this is functionally the same as the above. Why it needs to exist, I don't know.
+This happening is skipped by Akari as it is generated at the same time as the above happening which describes the same event and provides more information.
 
 **Governor appointed to office when converting to a Stronghold (stgovadd)**
 
@@ -572,6 +570,30 @@ Yes, this is functionally the same as the above. Why it needs to exist, I don't 
 - actor: first group
 - origin: from `region:` bucket (needs differentiation from the other region) or [unknown]
 - destination: second group
+
+**Region is annexed into another region (annexfna)**
+
+`^%%([0-9a-z_-]+)%% was annexed by %%([0-9a-z_-]+)%%$`
+- origin: first group
+- destination: second group
+
+**Region is annexed into another region (SKIPPED)**
+
+`^Annexed by %%([0-9a-z_-]+)%%$`
+
+This happening is skipped by Akari as it is generated at the same time as the above happening which describes the same event and provides more information.
+
+**Region annexes another region (annexfnb)**
+
+`^%%([0-9a-z_-]+)%% annexed %%([0-9a-z_-]+)%%$`
+- origin: first group
+- destination: second group
+
+**Region annexes another region (SKIPPED)**
+
+`^Annexed %%([0-9a-z_-]+)%%$`
+
+This happening is skipped by Akari as it is generated at the same time as the above happening which describes the same event and provides more information.
 
 **Nation grants posting privileges to embassy regions (addxrmb)**
 
@@ -917,3 +939,12 @@ In most cases, when a `conndrop` event occurs, the connection will only be down 
 However, in some cases (if the connection limit is reached, or the SSE server / API is down for an extended period of time, or even NS itself), the disconnection period may persist for longer. In those cases, applications may want to switch to an alternative method of fetching events when the `conndrop` event is received (for example, a recruiting program using Akari for nation founds temporarily switching to the `newnationdetails` API) until the connection is resumed (which will send a `conninit` event).
 
 If an application wants to process every single happening of a given kind, it may find it useful to catch the `connmiss` event in order to fetch the missing events fron the happenings API directly (In the future, Akari may optionally do this itself for certain output sources).
+
+## Unmatched happening lines (WIP)
+
+**Annexation:**
+%%renascor%% was annexed by %%talonia%%
+Annexed by %%talonia%%
+Annexed %%renascor%%
+%%talonia%% annexed %%renascor%%
+@@bonelisse@@ withdrew a demand to annex %%dlessemput%%
