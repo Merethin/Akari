@@ -395,7 +395,7 @@ Subexpressions:
 
 **Governor/Delegate names the governor's office (rgovtset)**
 
-`^@@([0-9a-z_-]+)@@ named the Governor's office  <b>(.+)</b> in %%([0-9a-z_-]+)%%$`
+`^@@([0-9a-z_-]+)@@ named the Governor's office  <b>(.*)</b> in %%([0-9a-z_-]+)%%$`
 - actor: first group
 - origin: third group
 - data: governor name (second group)
@@ -404,7 +404,7 @@ Note: the two spaces there are intentional. NationStates puts two spaces before 
 
 **Governor/Delegate changes the governor's office name (rgovtupd)**
 
-`^@@([0-9a-z_-]+)@@ renamed the Governor's office from "(.+)" to  <b>(.+)</b> in %%([0-9a-z_-]+)%%$`
+`^@@([0-9a-z_-]+)@@ renamed the Governor's office from "(.*)" to  <b>(.*)</b> in %%([0-9a-z_-]+)%%$`
 - actor: first group
 - origin: fourth group
 - data: old governor name (second group), new governor name (third group)
