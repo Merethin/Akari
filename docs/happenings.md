@@ -908,6 +908,12 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 - origin: first group
 - data: second group (resolution type), third group (resolution id)
 
+**A SC proposal nominating a nation or region passes (SKIPPED)**
+
+`^(Commended|Condemned|Liberated|Injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # (?:[0-9]+)</a>$`
+
+This happening is skipped by Akari as it is generated at the same time as the two happenings above which describe the same event and provide more information.
+
 # Unmatched events
 
 A happening that does not match any of the above regex patterns will be sent as an event with the category "**unknown**", and the happening line verbatim in the data array. The happening ID and timestamp are preserved as well. Do report any events marked as "unknown" to me so I can add them to this list!
