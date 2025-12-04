@@ -49,7 +49,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = read_config();
     let outputs = initialize_outputs(&config).await?;
     let sender = spawn_work_threads(outputs, config.input.workers);
-    let mut backoff = ExponentialBackoff::new(&[30, 90, 120, 240, 960, 1800]);
+    let mut backoff = ExponentialBackoff::new(&[60, 120, 240, 960, 1800]);
 
     tokio::select! {
         _ = tokio::signal::ctrl_c() => {
@@ -139,8 +139,7 @@ async fn main_loop(
             error!("Failed to send system event to worker: {err}");
         });
 
-        info!("Attempting to reconnect in {} seconds", backoff.delay());
-        backoff.wait().await;
+        info!("Attempting to reconnect");
     }
 }
 
