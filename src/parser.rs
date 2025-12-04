@@ -100,7 +100,16 @@ pub fn handle_server_message(
                 captures,
                 &regions,
                 happenings,
-            )
+            ).or_else(|| {
+                let mut event = Event::new(
+                    evt.id.parse().unwrap_or(-1), 
+                    evt.time,
+                    "skipped"
+                );
+            
+                event.data.push(line.to_owned());
+                return Some(event);
+            })
         },
         None => None,
     }

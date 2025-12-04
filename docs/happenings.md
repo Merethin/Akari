@@ -26,6 +26,18 @@ pub struct Event {
 }
 ```
 
+# A Note on Skipped Happenings
+
+Several happening categories are listed as "skipped". This means that they are duplicates of an existing happening that is generated at the same time, but provide less information.
+
+An example would be "%%region%% annexed %%other_region%%" also generating the happening "Annexed %%other_region%%" on the annexer's happenings feed. The second would be skipped, as the first already lets us know said event has happened and is more complete.
+
+Skipped happenings are not parsed, but they do get labeled with a category = "**skipped**", with the happening line verbatim in the data array, and get broadcasted nonetheless. Most applications will just want to ignore that category, as with the "unknown" category, but it is not actually _omitted_ for the sake of completeness.
+
+# A Note on Unmatched Happenings
+
+A happening that does not match any of the above regex patterns will be sent as an event with the category "**unknown**", and the happening line verbatim in the data array. The happening ID and timestamp are preserved as well. Do report any events marked as "unknown" to me so I can add them to this list!
+
 # Nations
 
 ## bucket: law
@@ -502,7 +514,7 @@ Subexpressions:
 `^%%([0-9a-z_-]+)%% became a Frontier$`
 - origin: first group
 
-**Region converts to a Frontier (SKIPPED)**
+**Region converts to a Frontier (skipped)**
 
 `^Became a Frontier$`
 
@@ -531,7 +543,7 @@ This happening is skipped by Akari as it is generated at the same time as the ab
 `^%%([0-9a-z_-]+)%% ceased to operate as a Frontier$`
 - origin: first group
 
-**Region converts to a Stronghold (SKIPPED)**
+**Region converts to a Stronghold (skipped)**
 
 `^Ceased to operate as a Frontier$`
 
@@ -577,7 +589,7 @@ This happening is skipped by Akari as it is generated at the same time as the ab
 - origin: first group
 - destination: second group
 
-**Region is annexed into another region (SKIPPED)**
+**Region is annexed into another region (skipped)**
 
 `^Annexed by %%([0-9a-z_-]+)%%$`
 
@@ -589,7 +601,7 @@ This happening is skipped by Akari as it is generated at the same time as the ab
 - origin: first group
 - destination: second group
 
-**Region annexes another region (SKIPPED)**
+**Region annexes another region (skipped)**
 
 `^Annexed %%([0-9a-z_-]+)%%$`
 
@@ -908,15 +920,11 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 - origin: first group
 - data: second group (resolution type), third group (resolution id)
 
-**A SC proposal nominating a nation or region passes (SKIPPED)**
+**A SC proposal nominating a nation or region passes (skipped)**
 
 `^(Commended|Condemned|Liberated|Injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # (?:[0-9]+)</a>$`
 
 This happening is skipped by Akari as it is generated at the same time as the two happenings above which describe the same event and provide more information.
-
-# Unmatched events
-
-A happening that does not match any of the above regex patterns will be sent as an event with the category "**unknown**", and the happening line verbatim in the data array. The happening ID and timestamp are preserved as well. Do report any events marked as "unknown" to me so I can add them to this list!
 
 # System events
 
