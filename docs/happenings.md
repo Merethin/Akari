@@ -736,7 +736,7 @@ Subexpressions:
 
 **WA resolution is passed (rspass)**
 
-`^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)$`
+`^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)(?: and implemented in all WA member nations)?$`
 - data: chamber (first group), resolution id (second group), proposal name (third group), votes for (fourth group), votes against (fifth group)
 
 **Nation's WA resolution is passed (nrspass)**

@@ -177,7 +177,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("wrvote", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its vote on the World Assembly Resolution "(.+)"$"#)?),
         // bucket: resolution
         ("rsfloor", Regex::new(r#"^The (General Assembly|Security Council) proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) entered the resolution voting floor$"#)?),
-        ("rspass", Regex::new(r#"^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)$"#)?),
+        ("rspass", Regex::new(r#"^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)(?: and implemented in all WA member nations)?$"#)?),
         ("rsfail", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$"#)?),
         ("rdiscard", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$"#)?),
         ("rsapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ approved the World Assembly proposal "(.+)"$"#)?),
