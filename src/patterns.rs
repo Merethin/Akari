@@ -189,7 +189,7 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("wadmit", Regex::new(r#"^@@([0-9a-z_-]+)@@ was admitted to the World Assembly$"#)?),
         ("wapply", Regex::new(r#"^@@([0-9a-z_-]+)@@ applied to join the World Assembly$"#)?),
         ("wresign", Regex::new(r#"^@@([0-9a-z_-]+)@@ resigned from the World Assembly$"#)?),
-        ("wkick", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ejected from the WA for rule violations$"#)?),
+        ("wkick", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ejected from the (?:WA for rule violations|World Assembly)$"#)?),
         // bucket: endo
         ("wendo", Regex::new(r#"^@@([0-9a-z_-]+)@@ endorsed @@([0-9a-z_-]+)@@$"#)?),
         ("wunendo", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its endorsement from @@([0-9a-z_-]+)@@$"#)?),
