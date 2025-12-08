@@ -446,11 +446,12 @@ fn rsfail_ext(event: &mut Event, captures: Captures<'_>, _: &[&str]) {
 
 fn parse_authority(authority: &str) -> String {
     lazy_static! {
-        static ref RE: Regex = Regex::new(r"</i>([A-Z])").unwrap();
+        static ref RE: Regex = Regex::new(r"</i>([A-Z])([a-z])").unwrap();
     }
 
     RE.captures_iter(authority).map(|m| {
-        m[1].to_owned()
+        if &m[1] == "E" && &m[2] == "x" { "X".to_owned() }
+        else { m[1].to_owned() }
     }).collect()
 }
 

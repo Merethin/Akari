@@ -357,7 +357,7 @@ Subexpressions:
 - data: office name (third group), authority (parsed from fourth group below)
 
 Subexpressions:
-- `</i>([A-Z])` to parse each authority letter (letter: first group)
+- `</i>([A-Z])([a-z])` to parse each authority letter (letter: first group, second group used to check for Ex (from Executive) and replace it with X)
 
 **Governor/Delegate renames a nation's RO position (rorename)**
 
@@ -376,7 +376,7 @@ Subexpressions:
 - data: granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists), office name (sixth group)
 
 Subexpressions:
-- `</i>([A-Z])` to parse each authority letter (letter: first group)
+- `</i>([A-Z])([a-z])` to parse each authority letter (letter: first group, second group used to check for Ex (from Executive) and replace it with X)
 
 **Governor/Delegate changes a nation's RO authority and position title (rochname)**
 
@@ -387,7 +387,7 @@ Subexpressions:
 - data: granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists), old office name (sixth group), new office name (seventh group)
 
 Subexpressions:
-- `</i>([A-Z])` to parse each authority letter (letter: first group)
+- `</i>([A-Z])([a-z])` to parse each authority letter (letter: first group, second group used to check for Ex (from Executive) and replace it with X)
 
 **Governor/Delegate dismisses a RO (roremove)**
 
@@ -431,7 +431,7 @@ Note: As above, the two spaces there are intentional. NationStates puts two spac
 - data: granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists)
 
 Subexpressions:
-- `</i>([A-Z])` to parse each authority letter (letter: first group)
+- `</i>([A-Z])([a-z])` to parse each authority letter (letter: first group, second group used to check for Ex (from Executive) and replace it with X)
 
 **Nation ascends to Governor position following an abdication or CTE (rnewgov)**
 
