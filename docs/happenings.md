@@ -14,8 +14,8 @@ SSE provides additional data on the context in which an event happens, notably w
 
 ```
 pub struct Event {
-   event_id: u64, # The ID of the event. Has to be unique.
-   timestamp: u64, # The UNIX integer timestamp of the event. Formatted as "TIMESTAMP" in Happenings.
+   event: u64, # The ID of the event. Has to be unique.
+   time: u64, # The UNIX integer timestamp of the event. Formatted as "TIMESTAMP" in Happenings.
    line: String, # The happening line directly from NS, with ending periods removed.
    actor: Option<String>, # The nation triggering this event, i.e. performing an action.
    receptor: Option<String>, # If there is one, the nation receiving the event (ex. being endorsed).
