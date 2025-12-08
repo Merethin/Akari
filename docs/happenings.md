@@ -961,12 +961,3 @@ In most cases, when a `conndrop` event occurs, the connection will only be down 
 However, in some cases (if the connection limit is reached, or the SSE server / API is down for an extended period of time, or even NS itself), the disconnection period may persist for longer. In those cases, applications may want to switch to an alternative method of fetching events when the `conndrop` event is received (for example, a recruiting program using Akari for nation founds temporarily switching to the `newnationdetails` API) until the connection is resumed (which will send a `conninit` event).
 
 If an application wants to process every single happening of a given kind, it may find it useful to catch the `connmiss` event in order to fetch the missing events fron the happenings API directly (In the future, Akari may optionally do this itself for certain output sources).
-
-## Unmatched happening lines (WIP)
-
-**Annexation:**
-%%renascor%% was annexed by %%talonia%%
-Annexed by %%talonia%%
-Annexed %%renascor%%
-%%talonia%% annexed %%renascor%%
-@@bonelisse@@ withdrew a demand to annex %%dlessemput%%
