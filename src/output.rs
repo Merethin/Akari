@@ -13,11 +13,12 @@ pub struct OutputChannels {
     console: Option<()>,
     file: Option<FileRotate<AppendTimestamp>>,
     rmq: Option<lapin::Channel>,
+    postgres: Option<sqlx::PgPool>
 }
 
 impl OutputChannels {
     fn new(config: Config) -> Self {
-        OutputChannels { config, redis: None, console: None, file: None, rmq: None }
+        OutputChannels { config, redis: None, console: None, file: None, rmq: None, postgres: None }
     }
 }
 
@@ -153,6 +154,20 @@ pub async fn initialize_outputs(config: &Config) -> Result<OutputChannels, Box<d
             channels.file = Some(file);
         }
 
+    if let Some(pg_config) = &config.output.postgres
+        && pg_config.enabled {
+            let pool = sqlx::PgPool::connect(pg_config.url.as_ref().unwrap_or_else(|| {
+                error!("Postgres output was enabled but no database url was set");
+                exit(1);
+            })).await.map_err(|err| {
+                error!("Error connecting to Postgres: {}", err);
+
+                err
+            })?;
+
+            channels.postgres = Some(pool);
+        }
+
     Ok(channels)
 }
 
@@ -204,6 +219,44 @@ pub async fn process_outputs(channels: &mut OutputChannels, event: &mut Event)
 
         if should_output_event(&redis_config.include, &redis_config.exclude, event) {
             event.save(connection).await?;
+        }
+    }
+
+    if let Some(pool) = &channels.postgres {
+        let pg_config = channels.config.output.postgres.clone().unwrap();
+
+        if should_output_event(&pg_config.include, &pg_config.exclude, event) {
+            if event.event == -1 {
+                if let Some(system_table) = pg_config.system_table_name {
+                    let result = sqlx::query(
+                    &format!("INSERT INTO {} (time, category, data) VALUES ($1, $2, $3)", system_table)
+                    ).bind(event.time as i64)
+                    .bind(event.category.clone())
+                    .bind(event.data.clone())
+                    .execute(pool).await;
+
+                    if result.is_err() {
+                        warn!("Failed to save event '{:?}' to Postgres database - {:?}", event, result);
+                    }
+                }
+            } else if let Some(table) = pg_config.table_name {
+                let result = sqlx::query(
+                &format!("INSERT INTO {} (event, time, actor, receptor, origin, destination, category, data)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING", table)
+                ).bind(event.event)
+                .bind(event.time as i64)
+                .bind(event.actor.clone())
+                .bind(event.receptor.clone())
+                .bind(event.origin.clone())
+                .bind(event.destination.clone())
+                .bind(event.category.clone())
+                .bind(event.data.clone())
+                .execute(pool).await;
+
+                if result.is_err() {
+                    warn!("Failed to save event '{:?}' to Postgres database - {:?}", event, result);
+                }
+            }
         }
     }
 

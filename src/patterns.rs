@@ -149,12 +149,14 @@ pub fn generate_happenings() -> Result<Happenings, Box<Error>> {
         ("annexrcv", Regex::new(r#"^%%([0-9a-z_-]+)%% received a demand from @@([0-9a-z_-]+)@@ to be annexed by %%([0-9a-z_-]+)%%$"#)?),
         ("annexrej", Regex::new(r#"^@@([0-9a-z_-]+)@@ rejected a demand for %%([0-9a-z_-]+)%% to be annexed into %%([0-9a-z_-]+)%%$"#)?),
         ("annexacc", Regex::new(r#"^@@([0-9a-z_-]+)@@ accepted a demand to be annexed by %%([0-9a-z_-]+)%%$"#)?),
+        ("annexwth", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew a demand to annex %%([0-9a-z_-]+)%%$"#)?),
         ("annexfna", Regex::new(r#"^%%([0-9a-z_-]+)%% was annexed by %%([0-9a-z_-]+)%%$"#)?),
         ("skipped", Regex::new(r#"^Annexed by %%([0-9a-z_-]+)%%$"#)?),
         ("annexfnb", Regex::new(r#"^%%([0-9a-z_-]+)%% annexed %%([0-9a-z_-]+)%%$"#)?),
         ("skipped", Regex::new(r#"^Annexed %%([0-9a-z_-]+)%%$"#)?),
         ("addxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ granted posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board to ([a-zA-Z ]+) in embassy regions$"#)?),
         ("remxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ revoked posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board from ([a-zA-Z ]+) in embassy regions$"#)?),
+        ("wzbanexp", Regex::new(r#"^Regional bans expired in %%([0-9a-z_-]+)%%$"#)?),
         // bucket: maps
         ("mcreate", Regex::new(r#"^@@([0-9a-z_-]+)@@ created &&([0-9a-z_-]+)&&$"#)?),
         ("mvcreate", Regex::new(r#"^@@([0-9a-z_-]+)@@ created \*\*([0-9a-z_-]+)\*\*$"#)?),
@@ -300,14 +302,16 @@ fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("stopst", vec![Actor(1), Origin(2)].into());
     map.insert("finishst", vec![Origin(1)].into());
     map.insert("stgovadd", vec![Receptor(1), Origin(2)].into());
-    map.insert("annexreq", Processor::init(vec![Actor(1), Destination(2)], annexreq_ext));
+    map.insert("annexreq", vec![Actor(1), Destination(2)].into());
     map.insert("annexrcv", vec![Destination(1), Actor(2), Origin(3)].into());
     map.insert("annexrej", vec![Actor(1), Origin(2), Destination(3)].into());
-    map.insert("annexacc", Processor::init(vec![Actor(1), Destination(2)], annexacc_ext));
+    map.insert("annexacc", vec![Actor(1), Destination(2)].into());
+    map.insert("annexwth", vec![Actor(1), Destination(2)].into());
     map.insert("annexfna", vec![Origin(1), Destination(2)].into());
     map.insert("annexfnb", vec![Origin(1), Destination(2)].into());
     map.insert("addxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
     map.insert("remxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
+    map.insert("wzbanexp", vec![Origin(1)].into());
     // bucket: maps
     map.insert("mcreate", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("mvcreate", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
@@ -438,18 +442,6 @@ fn rsfail_ext(event: &mut Event, captures: Captures<'_>, _: &[&str]) {
 
     event.data.push(votes_for.replace(",", ""));
     event.data.push(votes_against.replace(",", ""));
-}
-
-fn annexreq_ext(event: &mut Event, _: Captures<'_>, regions: &[&str]) {
-    event.origin = Some(regions.iter().filter(
-        |&region| region != &event.destination.clone().unwrap().as_str()
-    ).collect::<Vec<&&str>>().first().unwrap_or(&&"[unknown]").to_string());
-}
-
-fn annexacc_ext(event: &mut Event, _: Captures<'_>, regions: &[&str]) {
-    event.origin = Some(regions.iter().filter(
-        |&region| region != &event.destination.clone().unwrap().as_str()
-    ).collect::<Vec<&&str>>().first().unwrap_or(&&"[unknown]").to_string());
 }
 
 fn parse_authority(authority: &str) -> String {

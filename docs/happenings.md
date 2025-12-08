@@ -559,7 +559,6 @@ This happening is skipped by Akari as it is generated at the same time as the ab
 
 `^@@([0-9a-z_-]+)@@ sent a demand to annex %%([0-9a-z_-]+)%%$`
 - actor: first group
-- origin: from `region:` bucket (needs differentiation from the other region) or [unknown]
 - destination: second group
 
 **Region gets a request to be annexed by another region (annexrcv)**
@@ -580,7 +579,12 @@ This happening is skipped by Akari as it is generated at the same time as the ab
 
 `^@@([0-9a-z_-]+)@@ accepted a demand to be annexed by %%([0-9a-z_-]+)%%$`
 - actor: first group
-- origin: from `region:` bucket (needs differentiation from the other region) or [unknown]
+- destination: second group
+
+**Region withdraws a request for annexation (annexwth)**
+
+`^@@([0-9a-z_-]+)@@ withdrew a demand to annex %%([0-9a-z_-]+)%%$`
+- actor: first group
 - destination: second group
 
 **Region is annexed into another region (annexfna)**
@@ -620,6 +624,11 @@ This happening is skipped by Akari as it is generated at the same time as the ab
 - actor: first group
 - origin: second group
 - data: third group (nation group previously allowed to post)
+
+**Warzone bans expire (wzbanexp)**
+
+`^Regional bans expired in %%([0-9a-z_-]+)%%$`
+- origin: first group
 
 ## bucket: maps
 

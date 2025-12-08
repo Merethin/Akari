@@ -42,7 +42,7 @@ impl ExponentialBackoff<'_> {
 
     pub fn delay(&self) -> u64 {
         if self.index >= self.delays.len() {
-            return *self.delays.last().unwrap();
+            return *self.delays.last().expect("Delays should not be empty (verified by assertion)");
         }
 
         self.delays[self.index]
