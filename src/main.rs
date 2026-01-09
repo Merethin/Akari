@@ -184,7 +184,7 @@ async fn connect_retry_loop(
                 info!("Attempting to reconnect in {} seconds", backoff.delay());
                 backoff.wait().await;
             }
-        };
+        }
     }
 }
 

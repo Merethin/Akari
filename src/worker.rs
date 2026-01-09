@@ -68,7 +68,7 @@ pub fn spawn_work_threads(mut outputs: OutputChannels, worker_count: usize)
         let mut buffer = BTreeMap::new();
         let rt = Runtime::new().expect("Failed to initialize Tokio runtime for output worker thread");
 
-        for (i, result) in result_rx.iter() {
+        for (i, result) in &result_rx {
             buffer.insert(i, result);
 
             while let Some(maybe_event) = buffer.remove(&next_sequence_id) {
