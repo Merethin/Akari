@@ -4,7 +4,6 @@ workers = 2
 
 [output.redis]
 enabled = true
-url = "redis://0.0.0.0"
 
 [output.console]
 enabled = true
@@ -19,12 +18,10 @@ exclude = ["law", "rupdate"]
 
 [output.rmq]
 enabled = true
-url = "amqp://guest:guest@0.0.0.0:5672"
 exchange_name = "akari_events"
 
 [output.postgres]
 enabled = true
-url = "postgres://postgres@127.0.0.1"
 table_name = "akari"
 system_table_name = "akari_system"
 exclude = ["law", "rupdate"]

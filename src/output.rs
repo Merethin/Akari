@@ -33,13 +33,18 @@ fn should_output_event(include: &Option<Vec<String>>, exclude: &Option<Vec<Strin
 }
 
 fn exchange_name(config: &RabbitMQConfig) -> String {
-    config.exchange_name.clone().unwrap_or("akari-events".into())
+    config.exchange_name.clone().unwrap_or("akari_events".into())
 }
 
 pub async fn open_redis_connection(config: &RedisConfig) -> Result<redis_om::redis::aio::Connection, Box<dyn std::error::Error>> {
     assert!(config.enabled);
 
-    let client = redis_om::Client::open(config.url.clone().unwrap())?;
+    let url = std::env::var("REDIS_URL").unwrap_or_else(|err| {
+        error!("Redis output was enabled but no REDIS_URL was set: {err}");
+        exit(1);
+    });
+
+    let client = redis_om::Client::open(url)?;
 
     let mut conn = client.get_tokio_connection().await?;
 
@@ -82,9 +87,13 @@ pub async fn open_redis_connection(config: &RedisConfig) -> Result<redis_om::red
 pub async fn open_rmq_connection(config: &RabbitMQConfig) -> Result<lapin::Connection, Box<dyn std::error::Error>> {
     assert!(config.enabled);
 
+    let url = std::env::var("RABBITMQ_URL").unwrap_or_else(|err| {
+        error!("RabbitMQ output was enabled but no RABBITMQ_URL was set: {err}");
+        exit(1);
+    });
+
     let conn = lapin::Connection::connect(
-        &config.url.clone().unwrap(),
-        lapin::ConnectionProperties::default(),
+        &url, lapin::ConnectionProperties::default(),
     ).await?;
 
     info!("Connected to RabbitMQ");
@@ -156,10 +165,12 @@ pub async fn initialize_outputs(config: &Config) -> Result<OutputChannels, Box<d
 
     if let Some(pg_config) = &config.output.postgres
         && pg_config.enabled {
-            let pool = sqlx::PgPool::connect(pg_config.url.as_ref().unwrap_or_else(|| {
-                error!("Postgres output was enabled but no database url was set");
+            let url = std::env::var("DATABASE_URL").unwrap_or_else(|err| {
+                error!("Postgres output was enabled but no DATABASE_URL was set: {err}");
                 exit(1);
-            })).await.map_err(|err| {
+            });
+
+            let pool = sqlx::PgPool::connect(&url).await.map_err(|err| {
                 error!("Error connecting to Postgres: {}", err);
 
                 err
