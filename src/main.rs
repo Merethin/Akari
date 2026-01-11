@@ -43,6 +43,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         STATIC_MAX_LEVEL, LogConfig::default(), TerminalMode::Stderr, ColorChoice::Auto
     )?;
 
+    dotenv::dotenv().ok();
+
     let user_agent = read_user_agent();
     info!("Running with user agent '{}'", user_agent);
 

@@ -68,6 +68,8 @@ Run `cargo build --release` to compile the program. You'll need a recent version
 
 Run it with `NS_USER_AGENT=[YOUR MAIN NATION NAME] ./target/release/akari`.
 
+If using the Postgres output, set `DATABASE_URL` in the environment or .env file as well, if using the RabbitMQ output, set `RABBITMQ_URL`, and if using the Redis output, set `REDIS_URL`.
+
 Alternatively, you can set up a Docker container.
 
 Building it: `docker build --tag akari .`
