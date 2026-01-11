@@ -8,5 +8,3 @@ CREATE TABLE events (
     category TEXT NOT NULL,
     data TEXT[]
 );
-
-ALTER TABLE events ALTER COLUMN data TYPE jsonb USING to_jsonb(data);
