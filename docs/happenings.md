@@ -768,7 +768,7 @@ Subexpressions:
 **WA resolution fails at vote (rsfail)**
 
 `^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$`
-- data: chamber (first group), proposal name (second group), votes for (third group), votes against (fourth group)
+- data: chamber (first group), proposal name (second group), votes against (third group), votes for (fourth group)
 
 **WA resolution is discarded at vote (rdiscard)**
 
