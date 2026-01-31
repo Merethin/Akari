@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
-use std::sync::atomic::{AtomicUsize, Ordering};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::{sync::atomic::{AtomicUsize, Ordering}, time::{SystemTime, UNIX_EPOCH}};
 
 #[derive(Deserialize, Debug)]
 pub struct ServerEvent {
@@ -93,8 +92,6 @@ impl SequencedEvent {
 
 #[derive(Deserialize, Serialize, Clone, Debug, PartialEq, Eq)]
 pub struct ParsedEvent {
-    #[serde(skip_serializing_if = "String::is_empty")]
-    id: String,
     pub event: i64,
     pub time: u64,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -116,8 +113,7 @@ impl ParsedEvent {
         time: u64,
         category: &str,
     ) -> Self {
-        ParsedEvent { 
-            id: "".into(), 
+        ParsedEvent {
             event: event_id, 
             time,
             actor: None, 

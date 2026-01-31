@@ -1,7 +1,6 @@
 use crossbeam::channel::{unbounded, Sender};
 use log::error;
-use std::collections::BTreeMap;
-use std::thread;
+use std::{collections::BTreeMap, thread};
 use tokio::runtime::Runtime;
 
 use crate::events::{Message, ParsedEvent, SequencedEvent};

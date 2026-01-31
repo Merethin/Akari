@@ -373,7 +373,7 @@ Subexpressions:
 - actor: first group
 - receptor: fifth group
 - origin: seventh group
-- data: granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists), office name (sixth group)
+- data: office name (sixth group), granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists)
 
 Subexpressions:
 - `</i>([A-Z])([a-z])` to parse each authority letter (letter: first group, second group used to check for Ex (from Executive) and replace it with X)
@@ -384,7 +384,7 @@ Subexpressions:
 - actor: first group
 - receptor: fifth group
 - origin: eighth group
-- data: granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists), old office name (sixth group), new office name (seventh group)
+- data: old office name (sixth group), new office name (seventh group), granted authority (parsed below from third group if second group is "granted"), removed authority (parsed below from third group if second group is "removed", or fourth group if it exists)
 
 Subexpressions:
 - `</i>([A-Z])([a-z])` to parse each authority letter (letter: first group, second group used to check for Ex (from Executive) and replace it with X)

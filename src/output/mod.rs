@@ -4,9 +4,10 @@ mod postgres;
 mod rabbitmq;
 
 use std::error::Error;
-use crate::{config::Config, events::ParsedEvent};
 use async_trait::async_trait;
 use std::collections::HashSet;
+
+use crate::{config::Config, events::ParsedEvent};
 
 use console::ConsoleOutput;
 use file::FileOutput;

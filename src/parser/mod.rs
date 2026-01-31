@@ -6,6 +6,7 @@ use log::warn;
 use std::collections::HashMap;
 
 use crate::events::{ParsedEvent, ServerEvent};
+
 use patterns::generate_patterns;
 use processors::{Processor, generate_processor_map};
 
@@ -104,5 +105,92 @@ impl EventParser {
         processor.apply(&mut event, captures, regions);
 
         Some(event)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_extract_region_buckets() {
+        let buckets = &["all".to_string()];
+        let regions = EventParser::extract_region_buckets(buckets);
+        assert_eq!(regions, Vec::<&str>::new());
+
+        let buckets = &["all".to_string(), "endo".to_string(), "region:testregionia".to_string()];
+        let regions = EventParser::extract_region_buckets(buckets);
+        assert_eq!(regions, vec!["testregionia"]);
+
+        let buckets = &["region:the_pacific".to_string(), "change".to_string(), "region:testregionia".to_string()];
+        let regions = EventParser::extract_region_buckets(buckets);
+        assert_eq!(regions, vec!["the_pacific", "testregionia"]);
+    }
+
+    #[test]
+    fn test_find_matching_regex() {
+        let parser = EventParser::new().unwrap();
+
+        let (category, pattern) = parser.find_matching_regex("@@a@@ became WA Delegate of %%b%%").unwrap();
+        assert_eq!(*category, "ndel");
+        assert_eq!(pattern.as_str(), "^@@([0-9a-z_-]+)@@ became WA Delegate of %%([0-9a-z_-]+)%%$");
+
+        let (category, pattern) = parser.find_matching_regex(
+            "@@a@@ changed its national b to \"c\", its d to \"e\" and its f to \"g\""
+        ).unwrap();
+
+        assert_eq!(*category, "chfield");
+        assert_eq!(
+            pattern.as_str(), 
+            r#"^@@([0-9a-z_-]+)@@ changed its national ([a-z ]+) to "([^"]*)"((?:,? (?:and )?its [a-z ]+ to "[^"]*")+)?$"#
+        );
+    }
+
+    #[test]
+    fn test_simple_parse_server_event() {
+        let parser = EventParser::new().unwrap();
+
+        let event = parser.parse_server_event(ServerEvent {
+            id: "100".to_string(),
+            time: 200,
+            str: "@@a@@ changed a custom banner.".to_string(),
+            buckets: vec!["region:b".to_string()]
+        });
+
+        assert!(event.is_some());
+
+        let event = event.unwrap();
+        assert_eq!(event.event, 100);
+        assert_eq!(event.time, 200);
+        assert_eq!(event.actor, Some("a".to_string()));
+        assert!(event.receptor.is_none());
+        assert_eq!(event.origin, Some("b".to_string()));
+        assert!(event.destination.is_none());
+        assert_eq!(&event.category, "chbanner");
+        assert!(event.data.is_empty());
+    }
+
+    #[test]
+    fn test_complex_parse_server_event() {
+        let parser = EventParser::new().unwrap();
+
+        let event = parser.parse_server_event(ServerEvent {
+            id: "100".to_string(),
+            time: 200,
+            str: r#"@@a@@ granted <i class="b"></i>Bb and <i class="c"></i>Cc authority and removed <i class="e"></i>Ex authority from @@d@@ and renamed the office from "l" to "s" in %%m%%."#.to_string(),
+            buckets: vec!["region:b".to_string()]
+        });
+
+        assert!(event.is_some());
+
+        let event = event.unwrap();
+        assert_eq!(event.event, 100);
+        assert_eq!(event.time, 200);
+        assert_eq!(event.actor, Some("a".to_string()));
+        assert_eq!(event.receptor, Some("d".to_string()));
+        assert_eq!(event.origin, Some("m".to_string())); // region in pattern overrides bucket
+        assert!(event.destination.is_none());
+        assert_eq!(&event.category, "rochname");
+        assert_eq!(event.data, vec!["l", "s", "+BC", "-X"]);
     }
 }

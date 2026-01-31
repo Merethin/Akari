@@ -217,7 +217,7 @@ impl Connection {
             }
         }?;
 
-        let messages: Vec<ServerEvent> = raw_messages.iter().map(Self::deserialize_message).flatten().collect();
+        let messages: Vec<ServerEvent> = raw_messages.iter().flat_map(Self::deserialize_message).collect();
 
         if messages.is_empty() {
             return Ok(MessageResult::NoMessages);
