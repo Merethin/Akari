@@ -17,6 +17,8 @@ impl OutputChannel for ConsoleOutput {
 
         if !console_config.enabled { return Ok(None); }
 
+        info!("Console output initialized");
+
         Ok(Some(Box::new(Self { 
             filter: OutputChannelFilter::new(
                 console_config.include.clone(), 

@@ -27,10 +27,10 @@ impl OutputChannel for RabbitMQOutput {
 
         if !rmq_config.enabled { return Ok(None); }
 
-        let url = std::env::var("RABBITMQ_URL").unwrap_or_else(|err| {
-            error!("RabbitMQ output was enabled but no RABBITMQ_URL was set: {err}");
+        let Ok(url) = std::env::var("RABBITMQ_URL") else {
+            error!("RabbitMQ output was enabled but no RABBITMQ_URL was set!");
             exit(1);
-        });
+        };
 
         let conn = lapin::Connection::connect(
             &url, lapin::ConnectionProperties::default(),
@@ -46,9 +46,9 @@ impl OutputChannel for RabbitMQOutput {
             FieldTable::default()
         ).await?;
 
-        info!("Created RabbitMQ output exchange named '{}'", exchange);
-        
         channel.confirm_select(ConfirmSelectOptions::default()).await?;
+
+        info!("Created RabbitMQ output exchange named '{}'", exchange);
 
         Ok(Some(Box::new(Self { 
             channel,
@@ -62,16 +62,13 @@ impl OutputChannel for RabbitMQOutput {
 
     async fn output(&mut self, event: &ParsedEvent) -> Result<(), Box<dyn Error>> {
         if let Ok(payload) = serde_json::to_string(event) {
-            let confirm = self.channel
-                .basic_publish(
-                    &self.exchange,
-                    &event.category,
-                    BasicPublishOptions::default(),
-                    payload.as_bytes(),
-                    BasicProperties::default(),
-                )
-                .await?
-                .await?;
+            let confirm = self.channel.basic_publish(
+                &self.exchange,
+                &event.category,
+                BasicPublishOptions::default(),
+                payload.as_bytes(),
+                BasicProperties::default(),
+            ).await?.await?;
 
             if !confirm.is_ack() {
                 warn!("Failed to send event '{:?}' to RabbitMQ - {:?}", event, confirm);

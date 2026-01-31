@@ -1,6 +1,6 @@
 use file_rotate::{ContentLimit, FileRotate, compression::Compression, suffix::{AppendTimestamp, FileLimit}};
 use std::{process::exit, error::Error, io::Write};
-use log::error;
+use log::{error, info};
 use async_trait::async_trait;
 
 use crate::{output::{OutputChannel, OutputChannelFilter}, config::Config, events::ParsedEvent};
@@ -19,21 +19,26 @@ impl OutputChannel for FileOutput {
 
         if !file_config.enabled { return Ok(None); }
 
-        let file = 
-            FileRotate::new(file_config.path.clone().unwrap_or_else(|| {
-                error!("File output was enabled but no path was set");
-                exit(1);
-            }), 
+        let Some(path) = &file_config.path else {
+            error!("File output was enabled but no path was set");
+            exit(1);
+        };
+
+        let file = FileRotate::new(
+            path, 
             AppendTimestamp::default(
                 file_config.maxfiles.map_or(
                     FileLimit::Unlimited, |limit| FileLimit::MaxFiles(limit)
                 )
             ), 
             ContentLimit::Lines(
-                file_config.threshold.unwrap_or(500) * 1000
+                file_config.threshold.map_or(500, |v| v * 1000)
             ), 
             Compression::OnRotate(0),
-            None);
+            None
+        );
+
+        info!("File output initialized with path '{}'", path);
 
         Ok(Some(Box::new(Self { 
             file,

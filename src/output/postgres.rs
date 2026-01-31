@@ -1,5 +1,5 @@
 use std::{process::exit, error::Error};
-use log::{warn, error};
+use log::{warn, error, info};
 use async_trait::async_trait;
 
 use crate::{output::{OutputChannel, OutputChannelFilter}, config::Config, events::ParsedEvent};
@@ -7,7 +7,7 @@ use crate::{output::{OutputChannel, OutputChannelFilter}, config::Config, events
 pub struct PostgresOutput {
     pool: sqlx::PgPool,
     filter: OutputChannelFilter,
-    table_name: Option<String>,
+    table_name: String,
     system_table_name: Option<String>,
 }
 
@@ -20,16 +20,25 @@ impl OutputChannel for PostgresOutput {
 
         if !postgres_config.enabled { return Ok(None); }
 
-        let url = std::env::var("DATABASE_URL").unwrap_or_else(|err| {
-            error!("Postgres output was enabled but no DATABASE_URL was set: {err}");
+        let Ok(url) = std::env::var("DATABASE_URL") else {
+            error!("Postgres output was enabled but no DATABASE_URL was set!");
             exit(1);
-        });
+        };
 
-        let pool = sqlx::PgPool::connect(&url).await.map_err(|err| {
-            error!("Error connecting to Postgres: {}", err);
+        let Some(table_name) = &postgres_config.table_name else {
+            error!("Postgres output was enabled but table_name was not set!");
+            exit(1);
+        };
 
-            err
-        })?;
+        let pool = match sqlx::PgPool::connect(&url).await {
+            Ok(pool) => pool,
+            Err(err) => {
+                error!("Error connecting to Postgres: {}", err);
+                exit(1);
+            }
+        };
+
+        info!("Connected to Postgres database and saving to table '{}'", table_name);
 
         Ok(Some(Box::new(Self {
             pool,
@@ -37,7 +46,7 @@ impl OutputChannel for PostgresOutput {
                 postgres_config.include.clone(), 
                 postgres_config.exclude.clone()
             ),
-            table_name: postgres_config.table_name.clone(),
+            table_name: table_name.clone(),
             system_table_name: postgres_config.system_table_name.clone(),
         })))
     }
@@ -56,10 +65,10 @@ impl OutputChannel for PostgresOutput {
                     warn!("Failed to save event '{:?}' to Postgres database - {:?}", event, result);
                 }
             }
-        } else if let Some(table) = &self.table_name {
+        } else {
             let result = sqlx::query(
             &format!("INSERT INTO {} (event, time, actor, receptor, origin, destination, category, data)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING", table)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING", &self.table_name)
             ).bind(event.event)
             .bind(event.time as i64)
             .bind(event.actor.clone())
