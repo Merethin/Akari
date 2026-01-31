@@ -2,9 +2,6 @@
 url = "https://www.nationstates.net/api/all"
 workers = 2
 
-[output.redis]
-enabled = true
-
 [output.console]
 enabled = true
 include = ["move"]

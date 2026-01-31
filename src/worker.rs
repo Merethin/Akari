@@ -1,19 +1,17 @@
 use crossbeam::channel::{unbounded, Sender};
 use log::error;
 use std::collections::BTreeMap;
-use std::sync::Arc;
 use std::thread;
 use tokio::runtime::Runtime;
 
-use crate::events::{Event, Message};
-use crate::output::{process_outputs, OutputChannels};
-use crate::patterns::generate_happenings;
-use crate::parser::handle_server_message;
+use crate::events::{Message, ParsedEvent, SequencedEvent};
+use crate::output::{process_outputs, OutputChannel};
+use crate::parser::EventParser;
 
 fn broadcast_event(
-    outputs: &mut OutputChannels,
+    outputs: &mut Vec<Box<dyn OutputChannel>>,
     rt: &Runtime,
-    mut event: Event,
+    mut event: ParsedEvent,
 ) {
     rt.block_on(async {
         if let Err(err) = process_outputs(outputs, &mut event).await {
@@ -22,38 +20,38 @@ fn broadcast_event(
     });
 }
 
-pub fn spawn_work_threads(mut outputs: OutputChannels, worker_count: usize) 
-    -> Sender<(usize, Message)>
+pub fn spawn_work_threads(mut outputs: Vec<Box<dyn OutputChannel>>, worker_count: usize) 
+    -> Sender<SequencedEvent>
 {
-    let (work_tx, work_rx) = unbounded::<(usize, Message)>();
-    let (result_tx, result_rx) = unbounded::<(usize, Option<Event>)>();
-
-    let happenings = Arc::new(generate_happenings().expect("Failed to generate happening list"));
+    let (work_tx, work_rx) = unbounded::<SequencedEvent>();
+    let (result_tx, result_rx) = unbounded::<(usize, Option<ParsedEvent>)>();
 
     // Spawn parser workers
     for _ in 0..worker_count {
         let tx = result_tx.clone();
         let rx = work_rx.clone();
-        let h = happenings.clone();
+        let parser = EventParser::new().expect("Failed to create event parser for worker thread");
 
         thread::spawn(move || {
             for msg in rx {
-                match msg.1 {
+                let seq_id = msg.sequence_id();
+
+                match msg.get_event() {
                     Message::Server(event) => {
-                        let result = handle_server_message(event, &h);
-                        tx.send((msg.0, result)).unwrap_or_else(|err| {
+                        let result = parser.parse_server_event(event);
+                        tx.send((seq_id, result)).unwrap_or_else(|err| {
                             error!("Failed to send parsed event to output worker: {}", err);
                         });
                     },
                     Message::System(mut event) => {
-                        let mut result = Event::new(
+                        let mut result = ParsedEvent::new(
                             -1, 
                             event.time, 
                             event.category
                         );
 
                         result.data = std::mem::take(&mut event.data);
-                        tx.send((msg.0, Some(result))).unwrap_or_else(|err| {
+                        tx.send((seq_id, Some(result))).unwrap_or_else(|err| {
                             error!("Failed to send parsed event to output worker: {}", err);
                         });
                     }

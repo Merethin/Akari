@@ -956,8 +956,8 @@ Typically emitted just after a `conninit` event when the connection has been suc
 
 ## Utility
 
-In most cases, when a `conndrop` event occurs, the connection will only be down for a minute or so - a sporadic SSE failure will lead to Akari dropping the connection, attempting to reconnect after 60 seconds and successfully doing so.
+In most cases, when a `conndrop` event occurs, the connection will only be down for a second or so - a sporadic SSE failure will lead to Akari dropping the connection, attempting to reconnect and successfully doing so.
 
 However, in some cases (if the connection limit is reached, or the SSE server / API is down for an extended period of time, or even NS itself), the disconnection period may persist for longer. In those cases, applications may want to switch to an alternative method of fetching events when the `conndrop` event is received (for example, a recruiting program using Akari for nation founds temporarily switching to the `newnationdetails` API) until the connection is resumed (which will send a `conninit` event).
 
-If an application wants to process every single happening of a given kind, it may find it useful to catch the `connmiss` event in order to fetch the missing events fron the happenings API directly (In the future, Akari may optionally do this itself for certain output sources).
+If an application wants to process every single happening of a given kind, it may find it useful to catch the `connmiss` event in order to fetch the missing events from the happenings API directly.
