@@ -215,11 +215,11 @@ fn parse_census_percentages(data: &str) -> Vec<String> {
         static ref RE: Regex = Regex::new(r#"the Top (1|5|10)% (?:of the world )?for((?:,? (?:and )?(?:(?:[A-Z][A-Za-z-]+ ?)+))*)"#).unwrap();
     }
 
-    RE.captures_iter(data).map(|m| {
+    RE.captures_iter(data).flat_map(|m| {
         let mut vec = vec![m[1].to_owned()];
         vec.append(&mut parse_census_labels(&m[2]));
         vec
-    }).flatten().collect()
+    }).collect()
 }
 
 fn chcensus_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {

@@ -10,10 +10,10 @@ use crate::parser::EventParser;
 fn broadcast_event(
     outputs: &mut Vec<Box<dyn OutputChannel>>,
     rt: &Runtime,
-    mut event: ParsedEvent,
+    event: ParsedEvent,
 ) {
     rt.block_on(async {
-        if let Err(err) = process_outputs(outputs, &mut event).await {
+        if let Err(err) = process_outputs(outputs, event).await {
             error!("Error while processing output: {}", err);
         }
     });

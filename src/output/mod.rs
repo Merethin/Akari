@@ -66,11 +66,11 @@ pub async fn initialize_outputs(
 }
 
 pub async fn process_outputs(
-    channels: &mut Vec<Box<dyn OutputChannel>>, event: &mut ParsedEvent
+    channels: &mut Vec<Box<dyn OutputChannel>>, event: ParsedEvent
 ) -> Result<(), Box<dyn Error>> {
     for channel in channels {
-        if channel.get_filter().should_output_event(event) {
-            channel.output(event).await?;
+        if channel.get_filter().should_output_event(&event) {
+            channel.output(&event).await?;
         }
     }
 
