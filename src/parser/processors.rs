@@ -273,11 +273,11 @@ fn rspass_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
 }
 
 fn rsfail_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
-    let votes_for = &captures[3];
-    let votes_against = &captures[4];
+    let votes_against = &captures[3];
+    let votes_for = &captures[4];
 
-    event.data.push(votes_for.replace(",", ""));
     event.data.push(votes_against.replace(",", ""));
+    event.data.push(votes_for.replace(",", ""));
 }
 
 fn parse_authority(authority: &str) -> String {
