@@ -26,8 +26,8 @@ Currently, there are 5 implemented output sources, each of which can be enabled 
 
 - `console` - Prints events to stderr.
 - `file` - Writes events to a log file. Rotates log files after they reach a certain length and compresses older ones.
-- `rmq` - Broadcasts events to a RabbitMQ instance. Specifically, it broadcasts to a topic exchange (the exchange name can be configured in `akari.toml`). Applications can bind their queues to `*` or `#` to receive all events or bind to each category they want to listen to (categories are listed in [docs/happenings.md](docs/happenings.md)).
-- `postgres`: Saves events to a Postgres database. The tables must be set up manually beforehand (see [the SQL folder](sql/)).
+- `rmq` - Broadcasts events to a RabbitMQ instance. Specifically, it broadcasts to a topic exchange (named `akari_events`). Applications can bind their queues to `*` or `#` to receive all events or bind to each category they want to listen to (categories are listed in [docs/happenings.md](docs/happenings.md)). The url to connect to the RabbitMQ instance should be provided in the environment as `RABBITMQ_URL`.
+- `postgres`: Saves events to a Postgres database. The tables are created automatically (`akari_events` for NS happenings, `akari_system_events` for Akari events such as `conninit` and `conndrop`). The url to connect to the Postgres instance should be provided in the environment as `DATABASE_URL`.
 
 Events are always output in JSON format.
 
@@ -67,7 +67,7 @@ Run `cargo build --release` to compile the program. You'll need a recent version
 
 Run it with `NS_USER_AGENT=[YOUR MAIN NATION NAME] ./target/release/akari`.
 
-If using the Postgres output, set `DATABASE_URL` in the environment or .env file as well, if using the RabbitMQ output, set `RABBITMQ_URL`, and if using the Redis output, set `REDIS_URL`.
+If using the Postgres output, set `DATABASE_URL` in the environment or .env file as well, and if using the RabbitMQ output, set `RABBITMQ_URL`.
 
 Alternatively, you can set up a Docker container.
 

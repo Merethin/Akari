@@ -6,17 +6,14 @@ use lapin::{
     types::FieldTable, ExchangeKind, BasicProperties
 };
 
-use crate::{output::{OutputChannel, OutputChannelFilter}, config::{Config, RabbitMQConfig}, events::ParsedEvent};
+use crate::{output::{OutputChannel, OutputChannelFilter}, config::Config, events::ParsedEvent};
 
 pub struct RabbitMQOutput {
     channel: lapin::Channel,
-    exchange: String,
     filter: OutputChannelFilter,
 }
 
-fn exchange_name(config: &RabbitMQConfig) -> String {
-    config.exchange_name.clone().unwrap_or("akari_events".into())
-}
+const EXCHANGE_NAME: &'static str = "akari_events";
 
 #[async_trait]
 impl OutputChannel for RabbitMQOutput {
@@ -36,11 +33,10 @@ impl OutputChannel for RabbitMQOutput {
             &url, lapin::ConnectionProperties::default(),
         ).await?;
 
-        let exchange = exchange_name(rmq_config);
         let channel = conn.create_channel().await?;
 
         channel.exchange_declare(
-            &exchange,
+            EXCHANGE_NAME,
             ExchangeKind::Topic,
             ExchangeDeclareOptions::default(),
             FieldTable::default()
@@ -48,11 +44,10 @@ impl OutputChannel for RabbitMQOutput {
 
         channel.confirm_select(ConfirmSelectOptions::default()).await?;
 
-        info!("Created RabbitMQ output exchange named '{}'", exchange);
+        info!("Created RabbitMQ output exchange named '{}'", EXCHANGE_NAME);
 
         Ok(Some(Box::new(Self { 
             channel,
-            exchange,
             filter: OutputChannelFilter::new(
                 rmq_config.include.clone(), 
                 rmq_config.exclude.clone()
@@ -63,7 +58,7 @@ impl OutputChannel for RabbitMQOutput {
     async fn output(&mut self, event: &ParsedEvent) -> Result<(), Box<dyn Error>> {
         if let Ok(payload) = serde_json::to_string(event) {
             let confirm = self.channel.basic_publish(
-                &self.exchange,
+                EXCHANGE_NAME,
                 &event.category,
                 BasicPublishOptions::default(),
                 payload.as_bytes(),

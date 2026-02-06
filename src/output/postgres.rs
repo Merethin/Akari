@@ -7,9 +7,10 @@ use crate::{output::{OutputChannel, OutputChannelFilter}, config::Config, events
 pub struct PostgresOutput {
     pool: sqlx::PgPool,
     filter: OutputChannelFilter,
-    table_name: String,
-    system_table_name: Option<String>,
 }
+
+const TABLE_NAME: &'static str = "akari_events";
+const SYSTEM_TABLE_NAME: &'static str = "akari_system_events";
 
 #[async_trait]
 impl OutputChannel for PostgresOutput {
@@ -25,11 +26,6 @@ impl OutputChannel for PostgresOutput {
             exit(1);
         };
 
-        let Some(table_name) = &postgres_config.table_name else {
-            error!("Postgres output was enabled but table_name was not set!");
-            exit(1);
-        };
-
         let pool = match sqlx::PgPool::connect(&url).await {
             Ok(pool) => pool,
             Err(err) => {
@@ -38,7 +34,9 @@ impl OutputChannel for PostgresOutput {
             }
         };
 
-        info!("Connected to Postgres database and saving to table '{}'", table_name);
+        sqlx::migrate!().run(&pool).await?;
+
+        info!("Connected to Postgres database and saving to table '{}'", TABLE_NAME);
 
         Ok(Some(Box::new(Self {
             pool,
@@ -46,29 +44,25 @@ impl OutputChannel for PostgresOutput {
                 postgres_config.include.clone(), 
                 postgres_config.exclude.clone()
             ),
-            table_name: table_name.clone(),
-            system_table_name: postgres_config.system_table_name.clone(),
         })))
     }
 
     async fn output(&mut self, event: &ParsedEvent) -> Result<(), Box<dyn Error>> {
         if event.event == -1 {
-            if let Some(system_table) = &self.system_table_name {
-                let result = sqlx::query(
-                &format!("INSERT INTO {} (time, category, data) VALUES ($1, $2, $3)", system_table)
-                ).bind(event.time as i64)
-                .bind(event.category.clone())
-                .bind(event.data.clone())
-                .execute(&self.pool).await;
+            let result = sqlx::query(
+                &format!("INSERT INTO {} (time, category, data) VALUES ($1, $2, $3)", SYSTEM_TABLE_NAME)
+            ).bind(event.time as i64)
+            .bind(event.category.clone())
+            .bind(event.data.clone())
+            .execute(&self.pool).await;
 
-                if result.is_err() {
-                    warn!("Failed to save event '{:?}' to Postgres database - {:?}", event, result);
-                }
+            if result.is_err() {
+                warn!("Failed to save event '{:?}' to Postgres database - {:?}", event, result);
             }
         } else {
             let result = sqlx::query(
-            &format!("INSERT INTO {} (event, time, actor, receptor, origin, destination, category, data)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING", &self.table_name)
+                &format!("INSERT INTO {} (event, time, actor, receptor, origin, destination, category, data)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING", TABLE_NAME)
             ).bind(event.event)
             .bind(event.time as i64)
             .bind(event.actor.clone())

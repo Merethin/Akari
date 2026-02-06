@@ -15,10 +15,7 @@ exclude = ["law", "rupdate"]
 
 [output.rmq]
 enabled = true
-exchange_name = "akari_events"
 
 [output.postgres]
 enabled = true
-table_name = "akari"
-system_table_name = "akari_system"
 exclude = ["law", "rupdate"]

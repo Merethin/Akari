@@ -48,7 +48,6 @@ pub struct FileConfig {
 #[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct RabbitMQConfig {
     pub enabled: bool,
-    pub exchange_name: Option<String>,
     pub include: Option<Vec<String>>,
     pub exclude: Option<Vec<String>>,
 }
@@ -56,8 +55,6 @@ pub struct RabbitMQConfig {
 #[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct PostgresConfig {
     pub enabled: bool,
-    pub table_name: Option<String>,
-    pub system_table_name: Option<String>,
     pub include: Option<Vec<String>>,
     pub exclude: Option<Vec<String>>,
 }
