@@ -22,7 +22,7 @@ Akari is multithreaded - it uses one thread to read SSE events from NS, one to b
 
 **Outputs**
 
-Currently, there are 5 implemented output sources, each of which can be enabled or disabled separately and assigned an `include` list (to only broadcast certain events to that output) or an `exclude` list (to exclude certain events from being broadcast to that output).
+Currently, there are 4 implemented output sources, each of which can be enabled or disabled separately and assigned an `include` list (to only broadcast certain events to that output) or an `exclude` list (to exclude certain events from being broadcast to that output).
 
 - `console` - Prints events to stderr.
 - `file` - Writes events to a log file. Rotates log files after they reach a certain length and compresses older ones.
