@@ -13,6 +13,7 @@ RUN cargo build --release
 RUN rm src/*.rs
 
 COPY ./src ./src
+COPY ./migrations ./migrations
 
 RUN rm ./target/release/deps/akari*
 RUN cargo build --release
