@@ -4,7 +4,7 @@ use std::{sync::atomic::{AtomicUsize, Ordering}, time::{SystemTime, UNIX_EPOCH}}
 #[derive(Deserialize, Debug)]
 pub struct ServerEvent {
     pub id: String,
-    pub time: u64,
+    pub time: String,
     pub str: String,
     pub buckets: Vec<String>,
     // pub htmlStr: String

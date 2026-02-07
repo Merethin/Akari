@@ -39,7 +39,7 @@ impl EventParser {
 
             let parsed_event = ParsedEvent::new(
                 event.id.parse().unwrap_or(-1), 
-                event.time,
+                event.time.parse().unwrap_or(0),
                 category
             );
 
@@ -76,7 +76,7 @@ impl EventParser {
     fn create_generic_event(&self, event: &ServerEvent, line: &str, category: &str) -> ParsedEvent {
         let mut event = ParsedEvent::new(
             event.id.parse().unwrap_or(-1), 
-            event.time,
+            event.time.parse().unwrap_or(0),
             category
         );
 
@@ -152,7 +152,7 @@ mod tests {
 
         let event = parser.parse_server_event(ServerEvent {
             id: "100".to_string(),
-            time: 200,
+            time: "200".to_string(),
             str: "@@a@@ changed a custom banner.".to_string(),
             buckets: vec!["region:b".to_string()]
         });
@@ -176,7 +176,7 @@ mod tests {
 
         let event = parser.parse_server_event(ServerEvent {
             id: "100".to_string(),
-            time: 200,
+            time: 200.to_string(),
             str: r#"@@a@@ granted <i class="b"></i>Bb and <i class="c"></i>Cc authority and removed <i class="e"></i>Ex authority from @@d@@ and renamed the office from "l" to "s" in %%m%%."#.to_string(),
             buckets: vec!["region:b".to_string()]
         });
