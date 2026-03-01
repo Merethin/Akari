@@ -136,6 +136,7 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("rssubmit", vec![Actor(1), Data(vec![2,3,4])].into());
     map.insert("rsremsub", vec![Actor(1), Data(vec![2,3])].into());
     map.insert("rsquorum", vec![Data(vec![1,2]), Receptor(3)].into());
+    map.insert("rsmodrem", vec![Data(vec![1])].into());
     // bucket: member
     map.insert("wadmit", vec![BucketOrigin, Actor(1)].into());
     map.insert("wapply", vec![BucketOrigin, Actor(1)].into());

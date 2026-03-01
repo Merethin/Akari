@@ -805,6 +805,11 @@ Subexpressions:
 - receptor: third group
 - data: chamber (first group), proposal name (second group)
 
+**Proposal is removed from the queue by moderation (rsmodrem)**
+
+`^The proposal "(.+)" was removed from the floor$`
+- data: proposal name (first group)
+
 ## bucket: member
 
 **Nation joins the WA (wadmit)**

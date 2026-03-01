@@ -124,6 +124,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("rssubmit", Regex::new(r#"^@@([0-9a-z_-]+)@@ submitted a proposal to the (General Assembly|Security Council) (.+) Board entitled "(.+)"$"#)?),
         ("rsremsub", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew a proposal from the WA (General Assembly|Security Council) titled "(.+)"$"#)?),
         ("rsquorum", Regex::new(r#"^The (General Assembly|Security Council) proposal "(.+)" \[@@([0-9a-z_-]+)@@\] failed to achieve quorum$"#)?),
+        ("rsmodrem", Regex::new(r#"^The proposal "(.+)" was removed from the floor$"#)?),
         // bucket: member
         ("wadmit", Regex::new(r#"^@@([0-9a-z_-]+)@@ was admitted to the World Assembly$"#)?),
         ("wapply", Regex::new(r#"^@@([0-9a-z_-]+)@@ applied to join the World Assembly$"#)?),
