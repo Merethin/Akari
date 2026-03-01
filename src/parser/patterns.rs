@@ -133,6 +133,13 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         // bucket: endo
         ("wendo", Regex::new(r#"^@@([0-9a-z_-]+)@@ endorsed @@([0-9a-z_-]+)@@$"#)?),
         ("wunendo", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its endorsement from @@([0-9a-z_-]+)@@$"#)?),
+        // bucket: zombie
+        ("zhorde", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9]+) million survivors$"#)?),
+        ("zconvert", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9]+) million survivors and converting to a zombie exporter! Oh no!$"#)?),
+        ("zclean", Regex::new(r#"^@@([0-9a-z_-]+)@@ was cleansed by a Level ([0-9]+) ([A-Za-z ]+) Tactical Zombie Elimination Squad from @@([0-9a-z_-]+)@@, killing ([0-9]+) million zombies$"#)?),
+        ("zcleanrs", Regex::new(r#"^@@([0-9a-z_-]+)@@ was cleansed by a Level ([0-9]+) ([A-Za-z ]+) Tactical Zombie Elimination Squad from @@([0-9a-z_-]+)@@, killing ([0-9]+) million zombies and restoring to (.+)!$"#)?),
+        ("zcure", Regex::new(r#"^@@([0-9a-z_-]+)@@ was struck by a Mk ([IV]+) \(([A-Za-z ]+)\) Cure Missile from @@([0-9a-z_-]+)@@, curing ([0-9]+) million infected$"#)?),
+        ("zcurers", Regex::new(r#"^@@([0-9a-z_-]+)@@ was struck by a Mk ([IV]+) \(([A-Za-z ]+)\) Cure Missile from @@([0-9a-z_-]+)@@, curing ([0-9]+) million infected and restoring to (.+)!$"#)?),
         // bucket: all
         ("govabd", Regex::new(r#"^Governor @@([0-9a-z_-]+)@@ abdicated$"#)?),
         ("npoll", Regex::new(r#"^@@([0-9a-z_-]+)@@ created a new poll in %%([0-9a-z_-]+)%%: "(.+)"$"#)?),

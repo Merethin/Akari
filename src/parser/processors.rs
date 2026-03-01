@@ -145,6 +145,13 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     // bucket: endo
     map.insert("wendo", vec![BucketOrigin, Actor(1), Receptor(2)].into());
     map.insert("wunendo", vec![BucketOrigin, Actor(1), Receptor(2)].into());
+    // bucket: zombie
+    map.insert("zhorde", vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2,4])].into());
+    map.insert("zconvert", vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2,4])].into());
+    map.insert("zclean", vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3,5])].into());
+    map.insert("zcleanrs", vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3,5,6])].into());
+    map.insert("zcure", vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3,5])].into());
+    map.insert("zcurers", vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3,5,6])].into());
     // bucket: all
     map.insert("govabd", vec![BucketOrigin, Actor(1)].into());
     map.insert("npoll", vec![Actor(1), Origin(2), Data(vec![3])].into());
@@ -153,8 +160,8 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("nscnom", vec![BucketOrigin, Receptor(1), Data(vec![2]), Actor(3)].into());
     map.insert("rscnom", vec![Origin(1), Data(vec![2]), Actor(3)].into());
     map.insert("rsctg", vec![Origin(1), Data(vec![2]), Actor(3)].into());
-    map.insert("nscpass", vec![BucketOrigin, Receptor(1), Data(vec![2, 3])].into());
-    map.insert("rscpass", vec![Origin(1), Data(vec![2, 3])].into());
+    map.insert("nscpass", vec![BucketOrigin, Receptor(1), Data(vec![2,3])].into());
+    map.insert("rscpass", vec![Origin(1), Data(vec![2,3])].into());
 
     map
 }
