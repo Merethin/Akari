@@ -18,4 +18,5 @@ enabled = true
 
 [output.postgres]
 enabled = true
+skip_rmb_content = true
 exclude = ["law", "rupdate"]

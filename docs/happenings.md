@@ -128,7 +128,7 @@ Subexpressions:
 `^@@([0-9a-z_-]+)@@ lodged <a href="/region=(?:[0-9a-z_-]+)/page=display_region_rmb\?postid=(?:[0-9]+)#p([0-9]+)">a message</a> on the %%([0-9a-z_-]+)%% Regional Message Board$`
 - actor: first group
 - origin: third group
-- data: second group (post id)
+- data: second group (post id), `rmbMessage` SSE field (message content)
 
 **Nation suppresses a post (rmbnsupp)**
 

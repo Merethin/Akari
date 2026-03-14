@@ -55,6 +55,7 @@ pub struct RabbitMQConfig {
 #[derive(Clone, Deserialize, Serialize, Debug)]
 pub struct PostgresConfig {
     pub enabled: bool,
+    pub skip_rmb_content: Option<bool>,
     pub include: Option<Vec<String>>,
     pub exclude: Option<Vec<String>>,
 }

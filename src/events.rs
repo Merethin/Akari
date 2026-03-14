@@ -7,8 +7,9 @@ pub struct ServerEvent {
     pub time: String,
     pub str: String,
     pub buckets: Vec<String>,
+    #[serde(rename = "rmbMessage")]
+    pub rmb_message: Option<String>,
     // pub htmlStr: String
-    // pub rmbMessage: Option<String>
 }
 
 #[derive(Debug)]

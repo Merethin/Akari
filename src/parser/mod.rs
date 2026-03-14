@@ -47,7 +47,13 @@ impl EventParser {
                 parsed_event,
                 captures,
                 &regions,
-            ).or_else(|| {
+            ).map(|mut parsed_event| {
+                if parsed_event.category == "rmbpost" && let Some(rmb_message) = &event.rmb_message {
+                    parsed_event.data.push(rmb_message.clone());
+                }
+
+                parsed_event
+            }).or_else(|| {
                 return Some(self.create_generic_event(&event, line, "skipped"));
             });
         }
@@ -154,7 +160,8 @@ mod tests {
             id: "100".to_string(),
             time: "200".to_string(),
             str: "@@a@@ changed a custom banner.".to_string(),
-            buckets: vec!["region:b".to_string()]
+            buckets: vec!["region:b".to_string()],
+            rmb_message: None,
         });
 
         assert!(event.is_some());
@@ -176,9 +183,10 @@ mod tests {
 
         let event = parser.parse_server_event(ServerEvent {
             id: "100".to_string(),
-            time: 200.to_string(),
+            time: "200".to_string(),
             str: r#"@@a@@ granted <i class="b"></i>Bb and <i class="c"></i>Cc authority and removed <i class="e"></i>Ex authority from @@d@@ and renamed the office from "l" to "s" in %%m%%."#.to_string(),
-            buckets: vec!["region:b".to_string()]
+            buckets: vec!["region:b".to_string()],
+            rmb_message: None
         });
 
         assert!(event.is_some());

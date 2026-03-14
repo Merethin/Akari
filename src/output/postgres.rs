@@ -7,6 +7,7 @@ use crate::{output::{OutputChannel, OutputChannelFilter}, config::Config, events
 pub struct PostgresOutput {
     pool: sqlx::PgPool,
     filter: OutputChannelFilter,
+    skip_rmb_content: bool,
 }
 
 const TABLE_NAME: &'static str = "akari_events";
@@ -44,10 +45,17 @@ impl OutputChannel for PostgresOutput {
                 postgres_config.include.clone(), 
                 postgres_config.exclude.clone()
             ),
+            skip_rmb_content: postgres_config.skip_rmb_content.unwrap_or(false)
         })))
     }
 
     async fn output(&mut self, event: &ParsedEvent) -> Result<(), Box<dyn Error>> {
+        if self.skip_rmb_content && event.category == "rmbpost" && event.data.len() > 1 {
+            let mut event = event.clone();
+            event.data.resize(1, "".into());
+            return self.output(&event).await;
+        }
+
         if event.event == -1 {
             let result = sqlx::query(
                 &format!("INSERT INTO {} (time, category, data) VALUES ($1, $2, $3)", SYSTEM_TABLE_NAME)
