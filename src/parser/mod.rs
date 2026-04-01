@@ -5,7 +5,7 @@ use regex::{Regex, RegexSet, Captures, Error};
 use log::warn;
 use std::collections::HashMap;
 
-use crate::events::{ParsedEvent, ServerEvent};
+use crate::{events::{ParsedEvent, ServerEvent}, unicode::translate_to_unicode};
 
 use patterns::generate_patterns;
 use processors::{Processor, generate_processor_map};
@@ -50,6 +50,10 @@ impl EventParser {
             ).map(|mut parsed_event| {
                 if parsed_event.category == "rmbpost" && let Some(rmb_message) = &event.rmb_message {
                     parsed_event.data.push(rmb_message.clone());
+                }
+
+                for item in &mut parsed_event.data {
+                    translate_to_unicode(item);
                 }
 
                 parsed_event

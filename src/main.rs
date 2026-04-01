@@ -4,6 +4,7 @@ mod net;
 mod config;
 mod output;
 mod worker;
+mod unicode;
 
 use std::{env, process::exit, error::Error, time::Instant};
 use config_file::FromConfigFile;

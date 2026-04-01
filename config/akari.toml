@@ -4,19 +4,5 @@ workers = 2
 
 [output.console]
 enabled = true
-include = ["move"]
+include = ["rmbpost"]
 
-[output.file]
-enabled = true
-path = "akari.log"
-maxfiles = 5
-threshold = 500
-exclude = ["law", "rupdate"]
-
-[output.rmq]
-enabled = true
-
-[output.postgres]
-enabled = true
-skip_rmb_content = true
-exclude = ["law", "rupdate"]
