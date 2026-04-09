@@ -67,6 +67,7 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("crflag", vec![Actor(1), Origin(2)].into());
     map.insert("rrflag", vec![Actor(1), Origin(2)].into());
     map.insert("rmpoll", vec![Actor(1), Origin(2)].into());
+    map.insert("rmqpoll", vec![Actor(1), Origin(2)].into());
     map.insert("addtag", vec![Actor(1), Data(vec![2]), Origin(3)].into());
     map.insert("rmtag", vec![Actor(1), Data(vec![2]), Origin(3)].into());
     map.insert("roadd", Processor::init(vec![Actor(1), Receptor(2), Data(vec![3]), Origin(5)], roadd_ext));
@@ -155,6 +156,7 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     // bucket: all
     map.insert("govabd", vec![BucketOrigin, Actor(1)].into());
     map.insert("npoll", vec![Actor(1), Origin(2), Data(vec![3])].into());
+    map.insert("nqpoll", vec![Actor(1), Origin(2), Data(vec![3])].into());
     map.insert("modkick", vec![Receptor(1), Origin(2)].into());
     map.insert("nrspass", vec![Receptor(1), Data(vec![4,2,3])].into());
     map.insert("nscnom", vec![BucketOrigin, Receptor(1), Data(vec![2]), Actor(3)].into());

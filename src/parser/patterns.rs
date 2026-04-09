@@ -51,6 +51,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("crflag", Regex::new(r#"^@@([0-9a-z_-]+)@@ altered the regional flag of %%([0-9a-z_-]+)%%$"#)?),
         ("rrflag", Regex::new(r#"^@@([0-9a-z_-]+)@@ abolished the regional flag of %%([0-9a-z_-]+)%%$"#)?),
         ("rmpoll", Regex::new(r#"^@@([0-9a-z_-]+)@@ deleted a regional poll in %%([0-9a-z_-]+)%%$"#)?),
+        ("rmqpoll", Regex::new(r#"^@@([0-9a-z_-]+)@@ deleted a queued regional poll in %%([0-9a-z_-]+)%%$"#)?),
         ("addtag", Regex::new(r#"^@@([0-9a-z_-]+)@@ added the tag "([^"]+)" to %%([0-9a-z_-]+)%%$"#)?),
         ("rmtag", Regex::new(r#"^@@([0-9a-z_-]+)@@ removed the tag "([^"]+)" from %%([0-9a-z_-]+)%%$"#)?),
         ("roadd", Regex::new(r#"^@@([0-9a-z_-]+)@@ appointed @@([0-9a-z_-]+)@@ as (.+) with authority over (<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?(?:,? (?:and )?<i class="[a-z0-9\-]+"></i>[a-zA-Z ]+?)*) in %%([0-9a-z_-]+)%%$"#)?),
@@ -143,6 +144,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         // bucket: all
         ("govabd", Regex::new(r#"^Governor @@([0-9a-z_-]+)@@ abdicated$"#)?),
         ("npoll", Regex::new(r#"^@@([0-9a-z_-]+)@@ created a new poll in %%([0-9a-z_-]+)%%: "(.+)"$"#)?),
+        ("nqpoll", Regex::new(r#"^@@([0-9a-z_-]+)@@ queued a new poll in %%([0-9a-z_-]+)%%: "(.+)"$"#)?),
         ("modkick", Regex::new(r#"^@@([0-9a-z_-]+)@@ was removed from %%([0-9a-z_-]+)%% by moderation$"#)?),
         ("nrspass", Regex::new(r#"^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$"#)?),
         ("nscnom", Regex::new(r#"^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),

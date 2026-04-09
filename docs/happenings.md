@@ -334,6 +334,12 @@ Subexpressions:
 - actor: first group
 - origin: second group
 
+**Nation removes a queued regional poll (rmqpoll)**
+
+`^@@([0-9a-z_-]+)@@ deleted a queued regional poll in %%([0-9a-z_-]+)%%$`
+- actor: first group
+- origin: second group
+
 **Nation adds a tag to a region (addtag)**
 
 `^@@([0-9a-z_-]+)@@ added the tag "([^"]+)" to %%([0-9a-z_-]+)%%$`
@@ -940,6 +946,13 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 **Nation creates a new poll in a region (npoll)**
 
 `^@@([0-9a-z_-]+)@@ created a new poll in %%([0-9a-z_-]+)%%: "(.+)"$`
+- actor: first group
+- origin: second group
+- data: third group (poll title)
+
+**Nation queues a new poll in a region (nqpoll)**
+
+`^@@([0-9a-z_-]+)@@ queued a new poll in %%([0-9a-z_-]+)%%: "(.+)"$`
 - actor: first group
 - origin: second group
 - data: third group (poll title)
