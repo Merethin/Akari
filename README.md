@@ -67,7 +67,10 @@ Run `cargo build --release` to compile the program. You'll need a recent version
 
 Run it with `NS_USER_AGENT=[YOUR MAIN NATION NAME] ./target/release/akari`.
 
-If using the Postgres output, set `DATABASE_URL` in the environment or .env file as well, and if using the RabbitMQ output, set `RABBITMQ_URL`.
+If using the Postgres output, set `DATABASE_URL` in the environment or .env file as well, and if using the RabbitMQ output, set `RABBITMQ_URL`. You can also use specific individual variables instead (if a url is provided, it will override them):
+
+- For Postgres: `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_NAME`, and `DATABASE_PASSWORD` or `DATABASE_PASSWORD_FILE` (if the latter is provided, it should be the path of a file containing the exact contents of the password, which will override `DATABASE_PASSWORD`).
+- For RabbitMQ: `RABBITMQ_HOST`, `RABBITMQ_PORT`, `RABBITMQ_USER`, and `RABBITMQ_PASSWORD` or `RABBITMQ_PASSWORD_FILE` (if the latter is provided, it should be the path of a file containing the exact contents of the password, which will override `RABBITMQ_PASSWORD`).
 
 Alternatively, you can set up a Docker container.
 

@@ -1,6 +1,7 @@
-use std::{process::exit, error::Error};
+use std::{process::exit, error::Error, fs::read_to_string};
 use log::{warn, error, info};
 use async_trait::async_trait;
+use sqlx::postgres::PgConnectOptions;
 
 use crate::{output::{OutputChannel, OutputChannelFilter}, config::Config, events::ParsedEvent};
 
@@ -22,15 +23,18 @@ impl OutputChannel for PostgresOutput {
 
         if !postgres_config.enabled { return Ok(None); }
 
-        let Ok(url) = std::env::var("DATABASE_URL") else {
-            error!("Postgres output was enabled but no DATABASE_URL was set!");
-            exit(1);
-        };
-
-        let pool = match sqlx::PgPool::connect(&url).await {
-            Ok(pool) => pool,
+        let pool = match parse_connect_options() {
+            Ok(options) => {
+                match sqlx::PgPool::connect_with(options).await {
+                    Ok(pool) => pool,
+                    Err(err) => {
+                        error!("Error connecting to Postgres: {}", err);
+                        exit(1);
+                    }
+                }
+            },
             Err(err) => {
-                error!("Error connecting to Postgres: {}", err);
+                error!("Error parsing database connection parameters: {}", err);
                 exit(1);
             }
         };
@@ -92,4 +96,38 @@ impl OutputChannel for PostgresOutput {
     fn get_filter(&self) -> &OutputChannelFilter {
         &self.filter
     }
+}
+
+fn parse_connect_options() -> Result<PgConnectOptions, Box<dyn Error + Send + Sync>> {
+    if let Some(url) = std::env::var("DATABASE_URL").ok() {
+        let options: PgConnectOptions = url.parse()?;
+        return Ok(options);
+    }
+
+    let mut options = PgConnectOptions::new();
+
+    if let Some(host) = std::env::var("DATABASE_HOST").ok() {
+        options = options.host(&host);
+    }
+
+    if let Some(port) = std::env::var("DATABASE_PORT").ok() {
+        options = options.port(port.parse()?);
+    }
+
+    if let Some(user) = std::env::var("DATABASE_USER").ok() {
+        options = options.username(&user);
+    }
+
+    if let Some(name) = std::env::var("DATABASE_NAME").ok() {
+        options = options.database(&name);
+    }
+
+    if let Some(passfile) = std::env::var("DATABASE_PASSWORD_FILE").ok() {
+        let password = read_to_string(passfile)?;
+        options = options.password(&password);
+    } else if let Some(password) = std::env::var("DATABASE_PASSWORD").ok() {
+        options = options.password(&password);
+    }
+
+    Ok(options)
 }
