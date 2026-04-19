@@ -22,6 +22,8 @@ FROM rust:1.90-alpine
 
 WORKDIR /
 
+STOPSIGNAL SIGINT
+
 COPY --from=build /usr/src/akari/target/release/akari /usr/local/bin/akari
 
 CMD ["akari"]
