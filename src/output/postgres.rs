@@ -56,7 +56,7 @@ impl OutputChannel for PostgresOutput {
     async fn output(&mut self, event: &ParsedEvent) -> Result<(), Box<dyn Error>> {
         let data: Cow<Vec<String>> = if self.skip_rmb_content && event.category == "rmbpost" && event.data.len() > 1 {
             let mut data = event.data.clone();
-            data.resize(1, "".into());
+            data.truncate(1);
             Cow::Owned(data)
         } else {
             Cow::Borrowed(&event.data)
