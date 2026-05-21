@@ -1,4 +1,4 @@
-use std::{process::exit, error::Error, fs::read_to_string};
+use std::{borrow::Cow, error::Error, fs::read_to_string, process::exit};
 use log::{warn, error, info};
 use async_trait::async_trait;
 use sqlx::postgres::PgConnectOptions;
@@ -54,18 +54,20 @@ impl OutputChannel for PostgresOutput {
     }
 
     async fn output(&mut self, event: &ParsedEvent) -> Result<(), Box<dyn Error>> {
-        if self.skip_rmb_content && event.category == "rmbpost" && event.data.len() > 1 {
-            let mut event = event.clone();
-            event.data.resize(1, "".into());
-            return self.output(&event).await;
-        }
+        let data: Cow<Vec<String>> = if self.skip_rmb_content && event.category == "rmbpost" && event.data.len() > 1 {
+            let mut data = event.data.clone();
+            data.resize(1, "".into());
+            Cow::Owned(data)
+        } else {
+            Cow::Borrowed(&event.data)
+        };
 
         if event.event == -1 {
             let result = sqlx::query(
                 &format!("INSERT INTO {} (time, category, data) VALUES ($1, $2, $3)", SYSTEM_TABLE_NAME)
             ).bind(event.time as i64)
-            .bind(event.category.clone())
-            .bind(event.data.clone())
+            .bind(&event.category)
+            .bind(data.as_ref())
             .execute(&self.pool).await;
 
             if result.is_err() {
@@ -77,12 +79,12 @@ impl OutputChannel for PostgresOutput {
                     VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING", TABLE_NAME)
             ).bind(event.event)
             .bind(event.time as i64)
-            .bind(event.actor.clone())
-            .bind(event.receptor.clone())
-            .bind(event.origin.clone())
-            .bind(event.destination.clone())
-            .bind(event.category.clone())
-            .bind(event.data.clone())
+            .bind(&event.actor)
+            .bind(&event.receptor)
+            .bind(&event.origin)
+            .bind(&event.destination)
+            .bind(&event.category)
+            .bind(data.as_ref())
             .execute(&self.pool).await;
 
             if result.is_err() {
