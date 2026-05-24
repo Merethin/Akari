@@ -839,7 +839,7 @@ Subexpressions:
 **Nation is ejected from the WA for rule violations (wkick)**
 
 `^@@([0-9a-z_-]+)@@ was ejected from the (?:WA for rule violations|World Assembly)$`
-- receptor: first group
+- actor: first group
 - origin: from `region:` bucket or [unknown]
 
 #### Duplicated from bucket: admin (also show up in bucket: member)
