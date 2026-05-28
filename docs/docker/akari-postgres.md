@@ -69,10 +69,6 @@ services:
 url = "https://www.nationstates.net/api/all"
 workers = 2
 
-
-[output.file]
-enabled = false
-
 [output.postgres]
 enabled = true
 skip_rmb_content = true
