@@ -36,7 +36,6 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
 
     volumes:
-      - ./Akari:/app
       - ./config:/config
 
   postgres:
