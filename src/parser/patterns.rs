@@ -134,6 +134,8 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         // bucket: endo
         ("wendo", Regex::new(r#"^@@([0-9a-z_-]+)@@ endorsed @@([0-9a-z_-]+)@@$"#)?),
         ("wunendo", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its endorsement from @@([0-9a-z_-]+)@@$"#)?),
+        // WA Secretariat
+        ("secenter", Regex::new(r#"^@@([0-9a-z_-]+)@@ entered the World Assembly Secretariat election$"#)?),
         // bucket: zombie
         ("zhorde", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9]+) million survivors$"#)?),
         ("zconvert", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9]+) million survivors and converting to a zombie exporter! Oh no!$"#)?),

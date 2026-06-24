@@ -146,6 +146,8 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     // bucket: endo
     map.insert("wendo", vec![BucketOrigin, Actor(1), Receptor(2)].into());
     map.insert("wunendo", vec![BucketOrigin, Actor(1), Receptor(2)].into());
+    // WA Secretariat
+    map.insert("secenter", vec![BucketOrigin, Actor(1)].into());
     // bucket: zombie
     map.insert("zhorde", vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2,4])].into());
     map.insert("zconvert", vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2,4])].into());

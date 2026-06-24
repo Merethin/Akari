@@ -879,6 +879,14 @@ Subexpressions:
 - receptor: second group
 - origin: from `region:` bucket or [unknown]
 
+## WA Secretariat
+
+**Nation enters the WA Secretariat election (secenter)**
+
+`^@@([0-9a-z_-]+)@@ entered the World Assembly Secretariat election$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
+
 # Z-Day
 
 ## bucket: zombie
