@@ -887,6 +887,14 @@ Subexpressions:
 - actor: first group
 - origin: from `region:` bucket or [unknown]
 
+**Nation votes in the WA Secretariat election (secvote)**
+
+`^@@([0-9a-z_-]+)@@ voted for @@([0-9a-z_-]+)@@ in Round ([0-9]+) of the WASec election$`
+- actor: first group
+- receptor: second group
+- origin: from `region:` bucket or [unknown]
+- data: round (third group)
+
 # Z-Day
 
 ## bucket: zombie
