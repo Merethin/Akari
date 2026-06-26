@@ -137,6 +137,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         // WA Secretariat
         ("secenter", Regex::new(r#"^@@([0-9a-z_-]+)@@ entered the World Assembly Secretariat election$"#)?),
         ("secvote", Regex::new(r#"^@@([0-9a-z_-]+)@@ voted for @@([0-9a-z_-]+)@@ in Round ([0-9]+) of the WASec election$"#)?),
+        ("secrvote", Regex::new(r#"^@@([0-9a-z_-]+)@@ removed its vote in Round ([0-9]+) of the WASec election$"#)?),
         // bucket: zombie
         ("zhorde", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9]+) million survivors$"#)?),
         ("zconvert", Regex::new(r#"^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9]+) million survivors and converting to a zombie exporter! Oh no!$"#)?),

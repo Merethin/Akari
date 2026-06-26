@@ -149,6 +149,7 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     // WA Secretariat
     map.insert("secenter", vec![BucketOrigin, Actor(1)].into());
     map.insert("secvote", vec![BucketOrigin, Actor(1), Receptor(2), Data(vec![3])].into());
+    map.insert("secrvote", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     // bucket: zombie
     map.insert("zhorde", vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2,4])].into());
     map.insert("zconvert", vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2,4])].into());

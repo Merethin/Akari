@@ -895,6 +895,13 @@ Subexpressions:
 - origin: from `region:` bucket or [unknown]
 - data: round (third group)
 
+**Nation removes its vote in the WA Secretariat election (secrvote)**
+
+`^@@([0-9a-z_-]+)@@ removed its vote in Round ([0-9]+) of the WASec election$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
+- data: round (second group)
+
 # Z-Day
 
 ## bucket: zombie
