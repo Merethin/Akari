@@ -902,6 +902,12 @@ Subexpressions:
 - origin: from `region:` bucket or [unknown]
 - data: round (second group)
 
+**Nation gets elected to the WA Secretariat (secelect)**
+
+`^@@([0-9a-z_-]+)@@ was elected to the World Assembly Secretariat$`
+- receptor: first group
+- origin: from `region:` bucket or [unknown]
+
 # Z-Day
 
 ## bucket: zombie
