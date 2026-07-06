@@ -114,7 +114,7 @@ Subexpressions:
 
 **Nation publishes a new dispatch (dispatch)**
 
-`^@@([0-9a-z_-]+)@@ published "<a href="page=dispatch/id=([0-9]+)">([^><]+)</a>" \(([A-Za-z]+): ([A-Za-z]+)\)$`
+`^@@([0-9a-z_-]+)@@ published "<a href="page=dispatch/id=([0-9]+)">([^><]+)</a>" \(([A-Za-z ]+): ([A-Za-z ]+)\)$`
 - actor: first group
 - origin: from `region:` bucket or [unknown]
 - data: second group (dispatch id), third group (dispatch name), fourth group (dispatch category), fifth group (dispatch subcategory)
@@ -795,9 +795,9 @@ Subexpressions:
 
 **WA member submits a proposal (rssubmit)**
 
-`^@@([0-9a-z_-]+)@@ submitted a proposal to the (General Assembly|Security Council) (.+) Board entitled "(.+)"$`
+`^@@([0-9a-z_-]+)@@ submitted a proposal to the (General Assembly|Security Council)(?: (.+) Board)? entitled "(.+)"$`
 - actor: first group
-- data: chamber (second group), board (third group), proposal name (fourth group)
+- data: chamber (second group), board (third group, if existent, otherwise empty string), proposal name (fourth group)
 
 **Author withdraws a submitted proposal (rsremsub)**
 

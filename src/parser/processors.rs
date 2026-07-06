@@ -134,7 +134,7 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("rdiscard", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
     map.insert("rsapp", vec![Actor(1), Data(vec![2])].into());
     map.insert("rsremapp", vec![Actor(1), Data(vec![2])].into());
-    map.insert("rssubmit", vec![Actor(1), Data(vec![2,3,4])].into());
+    map.insert("rssubmit", Processor::init(vec![Actor(1), Data(vec![2])], rssubmit_ext));
     map.insert("rsremsub", vec![Actor(1), Data(vec![2,3])].into());
     map.insert("rsquorum", vec![Data(vec![1,2]), Receptor(3)].into());
     map.insert("rsmodrem", vec![Data(vec![1])].into());
@@ -341,4 +341,14 @@ fn rdelauth_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
     if let Some(value) = captures.get(5) {
         event.receptor = Some(value.as_str().to_owned());
     }
+}
+
+fn rssubmit_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
+    if let Some(value) = captures.get(3) {
+        event.data.push(value.as_str().to_owned());
+    } else {
+        event.data.push("".into());
+    }
+
+    event.data.push(captures[4].to_string());
 }

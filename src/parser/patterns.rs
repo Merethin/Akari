@@ -14,7 +14,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("chinf", Regex::new(r#"^@@([0-9a-z_-]+)@@'s influence in %%([0-9a-z_-]+)%% (rose|fell) from "([A-Za-z -]+)" to "([A-Za-z -]+)"$"#)?),
         ("rvfield", Regex::new(r#"^@@([0-9a-z_-]+)@@ revoked its national (faith|leader|capital)$"#)?),
         // bucket: dispatch
-        ("dispatch", Regex::new(r#"^@@([0-9a-z_-]+)@@ published "<a href="page=dispatch/id=([0-9]+)">([^><]+)</a>" \(([A-Za-z]+): ([A-Za-z]+)\)$"#)?),
+        ("dispatch", Regex::new(r#"^@@([0-9a-z_-]+)@@ published "<a href="page=dispatch/id=([0-9]+)">([^><]+)</a>" \(([A-Za-z ]+): ([A-Za-z ]+)\)$"#)?),
         // bucket: rmb
         ("rmbpost", Regex::new(r#"^@@([0-9a-z_-]+)@@ lodged <a href="/region=(?:[0-9a-z_-]+)/page=display_region_rmb\?postid=(?:[0-9]+)#p([0-9]+)">a message</a> on the %%([0-9a-z_-]+)%% Regional Message Board$"#)?),
         ("rmbnsupp", Regex::new(r#"^@@([0-9a-z_-]+)@@ suppressed a post on the %%([0-9a-z_-]+)%% Regional Message Board$"#)?),
@@ -122,7 +122,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("rdiscard", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$"#)?),
         ("rsapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ approved the World Assembly proposal "(.+)"$"#)?),
         ("rsremapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its approval for the World Assembly proposal "(.+)"$"#)?),
-        ("rssubmit", Regex::new(r#"^@@([0-9a-z_-]+)@@ submitted a proposal to the (General Assembly|Security Council) (.+) Board entitled "(.+)"$"#)?),
+        ("rssubmit", Regex::new(r#"^@@([0-9a-z_-]+)@@ submitted a proposal to the (General Assembly|Security Council)(?: (.+) Board)? entitled "(.+)"$"#)?),
         ("rsremsub", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew a proposal from the WA (General Assembly|Security Council) titled "(.+)"$"#)?),
         ("rsquorum", Regex::new(r#"^The (General Assembly|Security Council) proposal "(.+)" \[@@([0-9a-z_-]+)@@\] failed to achieve quorum$"#)?),
         ("rsmodrem", Regex::new(r#"^The proposal "(.+)" was removed from the floor$"#)?),
