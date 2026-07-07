@@ -117,14 +117,15 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("wrvote", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its vote on the World Assembly Resolution "(.+)"$"#)?),
         // bucket: resolution
         ("rsfloor", Regex::new(r#"^The (General Assembly|Security Council) proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) entered the resolution voting floor$"#)?),
-        ("rspass", Regex::new(r#"^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)(?: and implemented in all WA member nations)?$"#)?),
+        ("rspass", Regex::new(r#"^The (General Assembly|Security Council) resolution &&(?:GA|SC)RES:(?:2|3):([0-9]+):(.+)&& was passed ([0-9,]+) votes to ([0-9,]+)(?:, and recommended for adoption by all WA member nations)?$"#)?),
         ("rsfail", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$"#)?),
         ("rdiscard", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$"#)?),
         ("rsapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ approved the World Assembly proposal "(.+)"$"#)?),
         ("rsremapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its approval for the World Assembly proposal "(.+)"$"#)?),
         ("rssubmit", Regex::new(r#"^@@([0-9a-z_-]+)@@ submitted a proposal to the (General Assembly|Security Council)(?: (.+) Board)? entitled "(.+)"$"#)?),
         ("rsremsub", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew a proposal from the WA (General Assembly|Security Council) titled "(.+)"$"#)?),
-        ("rsquorum", Regex::new(r#"^The (General Assembly|Security Council) proposal "(.+)" \[@@([0-9a-z_-]+)@@\] failed to achieve quorum$"#)?),
+        ("rsquorum", Regex::new(r#"^The (General Assembly|Security Council) proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) failed to achieve quorum$"#)?),
+        ("rscensus", Regex::new(r#"^The General Assembly proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) reached quorum but could not enter the voting floor due to missing World Census analysis$"#)?),
         ("rsmodrem", Regex::new(r#"^The proposal "(.+)" was removed from the floor$"#)?),
         // bucket: member
         ("wadmit", Regex::new(r#"^@@([0-9a-z_-]+)@@ was admitted to the World Assembly$"#)?),
@@ -151,13 +152,16 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("npoll", Regex::new(r#"^@@([0-9a-z_-]+)@@ created a new poll in %%([0-9a-z_-]+)%%: "(.+)"$"#)?),
         ("nqpoll", Regex::new(r#"^@@([0-9a-z_-]+)@@ queued a new poll in %%([0-9a-z_-]+)%%: "(.+)"$"#)?),
         ("modkick", Regex::new(r#"^@@([0-9a-z_-]+)@@ was removed from %%([0-9a-z_-]+)%% by moderation$"#)?),
-        ("nrspass", Regex::new(r#"^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$"#)?),
+        ("nrspass", Regex::new(r#"^@@([0-9a-z_-]+)@@'s resolution &&(?:GA|SC)RES:(?:2|3):([0-9]+):(.+)&& was passed by the (General Assembly|Security Council)$"#)?),
         ("nscnom", Regex::new(r#"^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
         ("rscnom", Regex::new(r#"^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
         ("rsctg", Regex::new(r#"^%%([0-9a-z_-]+)%% was targeted for (Liberation|Injunction) in a World Assembly proposal by @@([0-9a-z_-]+)@@$"#)?),
         ("nscpass", Regex::new(r#"^@@([0-9a-z_-]+)@@ was (commended|condemned) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
         ("rscpass", Regex::new(r#"^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
-        ("skipped", Regex::new(r#"^(Commended|Condemned|Liberated|Injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # (?:[0-9]+)</a>$"#)?)
+        ("skipped", Regex::new(r#"^(Commended|Condemned|Liberated|Injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # (?:[0-9]+)</a>$"#)?),
+        ("rsvtopic", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated a forum topic link for WA current ([0-9]+)$"#)?),
+        ("rsptopic", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated a forum topic link for WA proposal ([0-9a-z_-]+)$"#)?),
+        ("rsadopt", Regex::new(r#"^@@([0-9a-z_-]+)@@ adopted General Assembly Resolution #(?:[0-9]+) "&&GARES:3:([0-9]+):(.+)&&"$"#)?),
     ];
 
     let regex_set = RegexSet::new(

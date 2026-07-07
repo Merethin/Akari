@@ -760,16 +760,15 @@ This happening is skipped by Akari as it is generated at the same time as the ab
 Subexpressions:
 - `@@([0-9a-z_-]+)@@` to parse coauthors (name: first group)
 
-**WA resolution is passed (rspass)**
+**(Pre-GA2026) WA resolution is passed (rspass)**
 
 `^The (General Assembly|Security Council) resolution <strong><a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a></strong> was passed ([0-9,]+) votes to ([0-9,]+)(?: and implemented in all WA member nations)?$`
 - data: chamber (first group), resolution id (second group), proposal name (third group), votes for (fourth group), votes against (fifth group)
 
-**Nation's WA resolution is passed (nrspass)**
+**(Post-GA2026) WA resolution is passed (rspass)**
 
-`^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$`
-- receptor: first group
-- data: chamber (fourth group), resolution id (second group), proposal name (third group)
+`^The (General Assembly|Security Council) resolution &&(?:GA|SC)RES:(?:2|3):([0-9]+):(.+)&& was passed ([0-9,]+) votes to ([0-9,]+)(?:, and recommended for adoption by all WA member nations)?$`
+- data: chamber (first group), resolution id (second group), proposal name (third group - is URL encoded), votes for (fourth group), votes against (fifth group)
 
 **WA resolution fails at vote (rsfail)**
 
@@ -785,31 +784,53 @@ Subexpressions:
 
 `^@@([0-9a-z_-]+)@@ approved the World Assembly proposal "(.+)"$`
 - actor: first group
+- origin: from `region:` bucket or [unknown]
 - data: proposal name (second group)
 
 **Delegate withdraws their approval of a proposal (rsremapp)**
 
 `^@@([0-9a-z_-]+)@@ withdrew its approval for the World Assembly proposal "(.+)"$`
 - actor: first group
+- origin: from `region:` bucket or [unknown]
 - data: proposal name (second group)
 
 **WA member submits a proposal (rssubmit)**
 
 `^@@([0-9a-z_-]+)@@ submitted a proposal to the (General Assembly|Security Council)(?: (.+) Board)? entitled "(.+)"$`
 - actor: first group
+- origin: from `region:` bucket or [unknown]
 - data: chamber (second group), board (third group, if existent, otherwise empty string), proposal name (fourth group)
 
 **Author withdraws a submitted proposal (rsremsub)**
 
 `^@@([0-9a-z_-]+)@@ withdrew a proposal from the WA (General Assembly|Security Council) titled "(.+)"$`
 - actor: first group
+- origin: from `region:` bucket or [unknown]
 - data: chamber (second group), proposal name (third group)
 
-**Proposal fails to achieve quorum (rsquorum)**
+**(Pre-GA2026) Proposal fails to achieve quorum (rsquorum)**
 
 `^The (General Assembly|Security Council) proposal "(.+)" \[@@([0-9a-z_-]+)@@\] failed to achieve quorum$`
 - receptor: third group
 - data: chamber (first group), proposal name (second group)
+
+**(Post-GA2026) Proposal fails to achieve quorum (rsquorum)**
+
+`^The (General Assembly|Security Council) proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) failed to achieve quorum$`
+- receptor: third group
+- data: chamber (first group), proposal name (second group), coauthors (parsed from fourth group below)
+
+Subexpressions:
+- `@@([0-9a-z_-]+)@@` to parse coauthors (name: first group)
+
+**GA proposal reaches quorum but lacks WC analysis (rscensus)**
+
+`^The General Assembly proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) reached quorum but could not enter the voting floor due to missing World Census analysis$`
+- receptor: second group
+- data: proposal name (first group), coauthors (parsed from third group below)
+
+Subexpressions:
+- `@@([0-9a-z_-]+)@@` to parse coauthors (name: first group)
 
 **Proposal is removed from the queue by moderation (rsmodrem)**
 
@@ -992,6 +1013,19 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 - receptor: first group
 - origin: second group
 
+**(Pre-GA2026) Nation's WA resolution is passed (nrspass)**
+
+`^@@([0-9a-z_-]+)@@'s resolution <a href="/page=WA_past_resolution/id=([0-9]+)/council=(?:1|2)">(.+)</a> was passed by the (General Assembly|Security Council)$`
+- receptor: first group
+- data: chamber (fourth group), resolution id (second group), proposal name (third group)
+
+**(Post-GA2026) Nation's WA resolution is passed (nrspass)**
+
+`^@@([0-9a-z_-]+)@@'s resolution &&(?:GA|SC)RES:(?:2|3):([0-9]+):(.+)&& was passed by the (General Assembly|Security Council)$`
+- receptor: first group
+- origin: from `region:` bucket or [unknown]
+- data: chamber (fourth group), resolution id (second group), proposal name (third group - is URL encoded)
+
 **Nation is nominated in a Security Council proposal (nscnom)**
 
 `^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$`
@@ -1032,6 +1066,27 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 `^(Commended|Condemned|Liberated|Injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # (?:[0-9]+)</a>$`
 
 This happening is skipped by Akari as it is generated at the same time as the two happenings above which describe the same event and provide more information.
+
+**Forum link is updated for the at-vote resolution (rsvtopic)**
+
+`^@@([0-9a-z_-]+)@@ updated a forum topic link for WA current ([0-9]+)$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
+- data: chamber ID (second group)
+
+**Forum link is updated for a proposal (rsptopic)**
+
+`^@@([0-9a-z_-]+)@@ updated a forum topic link for WA proposal ([0-9a-z_-]+)$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
+- data: proposal ID (second group)
+
+**Nation adopts a GA resolution (rsadopt)**
+
+`^@@([0-9a-z_-]+)@@ adopted General Assembly Resolution #(?:[0-9]+) "&&GARES:3:([0-9]+):(.+)&&"$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
+- data: resolution ID (second group), resolution name (third group - is URL encoded)
 
 # System events
 

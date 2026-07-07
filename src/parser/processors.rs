@@ -1,6 +1,6 @@
 use lazy_static::lazy_static;
 use regex::{Captures, Regex};
-use std::collections::HashMap;
+use std::{borrow::Cow, collections::HashMap};
 
 use crate::events::ParsedEvent;
 
@@ -132,11 +132,12 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("rspass", Processor::init(vec![Data(vec![1,2,3])], rspass_ext));
     map.insert("rsfail", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
     map.insert("rdiscard", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
-    map.insert("rsapp", vec![Actor(1), Data(vec![2])].into());
-    map.insert("rsremapp", vec![Actor(1), Data(vec![2])].into());
-    map.insert("rssubmit", Processor::init(vec![Actor(1), Data(vec![2])], rssubmit_ext));
-    map.insert("rsremsub", vec![Actor(1), Data(vec![2,3])].into());
-    map.insert("rsquorum", vec![Data(vec![1,2]), Receptor(3)].into());
+    map.insert("rsapp", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
+    map.insert("rsremapp", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
+    map.insert("rssubmit", Processor::init(vec![BucketOrigin, Actor(1), Data(vec![2])], rssubmit_ext));
+    map.insert("rsremsub", vec![BucketOrigin, Actor(1), Data(vec![2,3])].into());
+    map.insert("rsquorum", Processor::init(vec![Data(vec![1,2]), Receptor(3)], rsfloor_ext));
+    map.insert("rscensus", Processor::init(vec![Data(vec![1]), Receptor(2)], rscensus_ext));
     map.insert("rsmodrem", vec![Data(vec![1])].into());
     // bucket: member
     map.insert("wadmit", vec![BucketOrigin, Actor(1)].into());
@@ -163,12 +164,15 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("npoll", vec![Actor(1), Origin(2), Data(vec![3])].into());
     map.insert("nqpoll", vec![Actor(1), Origin(2), Data(vec![3])].into());
     map.insert("modkick", vec![Receptor(1), Origin(2)].into());
-    map.insert("nrspass", vec![Receptor(1), Data(vec![4,2,3])].into());
+    map.insert("nrspass", Processor::init(vec![BucketOrigin, Receptor(1), Data(vec![4,2])], nrspass_ext));
     map.insert("nscnom", vec![BucketOrigin, Receptor(1), Data(vec![2]), Actor(3)].into());
     map.insert("rscnom", vec![Origin(1), Data(vec![2]), Actor(3)].into());
     map.insert("rsctg", vec![Origin(1), Data(vec![2]), Actor(3)].into());
     map.insert("nscpass", vec![BucketOrigin, Receptor(1), Data(vec![2,3])].into());
     map.insert("rscpass", vec![Origin(1), Data(vec![2,3])].into());
+    map.insert("rsvtopic", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
+    map.insert("rsptopic", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
+    map.insert("rsadopt", Processor::init(vec![BucketOrigin, Actor(1), Data(vec![2])], nrspass_ext));
 
     map
 }
@@ -280,11 +284,19 @@ fn rsfloor_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
 }
 
 fn rspass_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
+    let resolution_name = &captures[3];
     let votes_for = &captures[4];
     let votes_against = &captures[5];
 
+    event.data.push(urlencoding::decode(resolution_name).unwrap_or(Cow::Borrowed("")).into_owned());
     event.data.push(votes_for.replace(",", ""));
     event.data.push(votes_against.replace(",", ""));
+}
+
+fn nrspass_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
+    let resolution_name = &captures[3];
+
+    event.data.push(urlencoding::decode(resolution_name).unwrap_or(Cow::Borrowed("")).into_owned());
 }
 
 fn rsfail_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
@@ -293,6 +305,12 @@ fn rsfail_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
 
     event.data.push(votes_against.replace(",", ""));
     event.data.push(votes_for.replace(",", ""));
+}
+
+fn rscensus_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
+    if let Some(coauthors) = captures.get(3) {
+        event.data.append(&mut parse_coauthors(coauthors.as_str()));
+    }
 }
 
 fn parse_authority(authority: &str) -> String {
