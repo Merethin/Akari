@@ -1067,6 +1067,14 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 
 This happening is skipped by Akari as it is generated at the same time as the two happenings above which describe the same event and provide more information.
 
+**A SC resolution targeting a region is repealed (rscrep)**
+
+`^(Commend|Condemn|Liberate|Injunct) resolution repealed$`
+- origin: from `region:` bucket or [unknown]
+- data: first group (resolution type)
+
+Note: there does not appear to be an equivalent happening for repeals of _nation_ C/Cs.
+
 **Forum link is updated for the at-vote resolution (rsvtopic)**
 
 `^@@([0-9a-z_-]+)@@ updated a forum topic link for WA current ([0-9]+)$`

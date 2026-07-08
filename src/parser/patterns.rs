@@ -159,6 +159,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("nscpass", Regex::new(r#"^@@([0-9a-z_-]+)@@ was (commended|condemned) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
         ("rscpass", Regex::new(r#"^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
         ("skipped", Regex::new(r#"^(Commended|Condemned|Liberated|Injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # (?:[0-9]+)</a>$"#)?),
+        ("rscrep", Regex::new(r#"^(Commend|Condemn|Liberate|Injunct) resolution repealed$"#)?),
         ("rsvtopic", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated a forum topic link for WA current ([0-9]+)$"#)?),
         ("rsptopic", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated a forum topic link for WA proposal ([0-9a-z_-]+)$"#)?),
         ("rsadopt", Regex::new(r#"^@@([0-9a-z_-]+)@@ adopted General Assembly Resolution #(?:[0-9]+) "&&GARES:3:([0-9]+):(.+)&&"$"#)?),
