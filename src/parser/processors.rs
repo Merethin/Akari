@@ -129,7 +129,7 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("wrvote", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     // bucket: resolution
     map.insert("rsfloor", Processor::init(vec![Data(vec![1,2]), Receptor(3)], rsfloor_ext));
-    map.insert("rspass", Processor::init(vec![Data(vec![1,2,3])], rspass_ext));
+    map.insert("rspass", Processor::init(vec![Data(vec![1,2])], rspass_ext));
     map.insert("rsfail", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
     map.insert("rdiscard", Processor::init(vec![Data(vec![1,2])], rsfail_ext));
     map.insert("rsapp", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
