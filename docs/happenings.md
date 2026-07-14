@@ -1096,6 +1096,12 @@ Note: there does not appear to be an equivalent happening for repeals of _nation
 - origin: from `region:` bucket or [unknown]
 - data: resolution ID (second group), resolution name (third group - is URL encoded)
 
+**Nation adopts all GA resolutions (rscomply)**
+
+`^@@([0-9a-z_-]+)@@ passed an omnibus bill to fully comply with the General Assembly$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
+
 # System events
 
 These are not emitted by NationStates but by Akari itself.
