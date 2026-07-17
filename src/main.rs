@@ -56,7 +56,7 @@ async fn main_loop(
     let mut last_event_id: Option<i64> = None;
 
     loop {
-        let mut connection = Connection::connect(&config.input.url, user_agent, backoff).await;
+        let mut connection = Connection::connect(&config.input.url, user_agent, backoff, last_event_id).await;
 
         sender.send(SystemEvent::connection_initialized()).unwrap_or_else(|err| {
             error!("Failed to send system event to worker: {err}");

@@ -56,17 +56,21 @@ impl Connection {
     }
 
     async fn try_connect(
-        url: &str, user_agent: &String
+        url: &str, user_agent: &String, last_event_id: Option<i64>
     ) -> Result<Self, Box<dyn Error>> {
         let client = reqwest::Client::builder().read_timeout(Duration::from_secs(30)).build()?;
 
-        let request = client.request(
+        let mut request = client.request(
             Method::GET, reqwest::Url::parse(&url)?
         ).header(
             "User-Agent", user_agent
         ).header(
             "Accept", "text/event-stream"
         );
+
+        if let Some(id) = last_event_id {
+            request = request.header("Last-Event-ID", id.to_string());
+        }
 
         let response = request.send().await?;
 
@@ -106,10 +110,11 @@ impl Connection {
     pub async fn connect(
         url: &str,
         user_agent: &String, 
-        backoff: &mut ExponentialBackoff<'_>
+        backoff: &mut ExponentialBackoff<'_>,
+        last_event_id: Option<i64>
     ) -> Connection {
         loop {
-            match Self::try_connect(url, user_agent).await {
+            match Self::try_connect(url, user_agent, last_event_id).await {
                 Ok(conn) => {
                     backoff.reset();
                     return conn;
