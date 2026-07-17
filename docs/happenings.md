@@ -1098,7 +1098,7 @@ Note: there does not appear to be an equivalent happening for repeals of _nation
 
 **Nation adopts all GA resolutions (rscomply)**
 
-`^@@([0-9a-z_-]+)@@ passed an omnibus bill to fully comply with the General Assembly$`
+`^@@([0-9a-z_-]+)@@ passed an omnibus bill to adopt all General Assembly resolutions$`
 - actor: first group
 - origin: from `region:` bucket or [unknown]
 

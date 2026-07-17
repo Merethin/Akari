@@ -163,7 +163,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("rsvtopic", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated a forum topic link for WA current ([0-9]+)$"#)?),
         ("rsptopic", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated a forum topic link for WA proposal ([0-9a-z_-]+)$"#)?),
         ("rsadopt", Regex::new(r#"^@@([0-9a-z_-]+)@@ adopted General Assembly Resolution #(?:[0-9]+) "&&GARES:3:([0-9]+):(.+)&&"$"#)?),
-        ("rscomply", Regex::new(r#"^@@([0-9a-z_-]+)@@ passed an omnibus bill to fully comply with the General Assembly$"#)?),
+        ("rscomply", Regex::new(r#"^@@([0-9a-z_-]+)@@ passed an omnibus bill to adopt all General Assembly resolutions$"#)?),
     ];
 
     let regex_set = RegexSet::new(
