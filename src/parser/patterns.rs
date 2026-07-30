@@ -118,8 +118,8 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         // bucket: resolution
         ("rsfloor", Regex::new(r#"^The (General Assembly|Security Council) proposal "(.+)" \(by @@([0-9a-z_-]+)@@((?:,?( and)? @@([0-9a-z_-]+)@@)*)?\) entered the resolution voting floor$"#)?),
         ("rspass", Regex::new(r#"^The (General Assembly|Security Council) resolution &&(?:GA|SC)RES:(?:2|3):([0-9]+):(.+)&& was passed ([0-9,]+) votes to ([0-9,]+)(?:, and recommended for adoption by all WA member nations)?$"#)?),
-        ("rsfail", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$"#)?),
-        ("rdiscard", Regex::new(r#"^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$"#)?),
+        ("rsfail", Regex::new(r#"^The (General Assembly|Security Council) resolution "(.+)" was defeated ([0-9,]+) votes to ([0-9,]+)$"#)?),
+        ("rdiscard", Regex::new(r#"^The (General Assembly|Security Council) resolution "(.+)" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$"#)?),
         ("rsapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ approved the World Assembly proposal "(.+)"$"#)?),
         ("rsremapp", Regex::new(r#"^@@([0-9a-z_-]+)@@ withdrew its approval for the World Assembly proposal "(.+)"$"#)?),
         ("rssubmit", Regex::new(r#"^@@([0-9a-z_-]+)@@ submitted a proposal to the (General Assembly|Security Council)(?: (.+) Board)? entitled "(.+)"$"#)?),

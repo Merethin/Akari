@@ -770,14 +770,24 @@ Subexpressions:
 `^The (General Assembly|Security Council) resolution &&(?:GA|SC)RES:(?:2|3):([0-9]+):(.+)&& was passed ([0-9,]+) votes to ([0-9,]+)(?:, and recommended for adoption by all WA member nations)?$`
 - data: chamber (first group), resolution id (second group), proposal name (third group - is URL encoded), votes for (fourth group), votes against (fifth group)
 
-**WA resolution fails at vote (rsfail)**
+**(Pre-GA2026) WA resolution fails at vote (rsfail)**
 
 `^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was defeated ([0-9,]+) votes to ([0-9,]+)$`
 - data: chamber (first group), proposal name (second group), votes against (third group), votes for (fourth group)
 
-**WA resolution is discarded at vote (rdiscard)**
+**(Post-GA2026) WA resolution fails at vote (rsfail)**
+
+`^The (General Assembly|Security Council) resolution "(.+)" was defeated ([0-9,]+) votes to ([0-9,]+)$`
+- data: chamber (first group), proposal name (second group), votes against (third group), votes for (fourth group)
+
+**(Pre-GA2026) WA resolution is discarded at vote (rdiscard)**
 
 `^The (General Assembly|Security Council) resolution "<strong>(.+)</strong>" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$`
+- data: chamber (first group), proposal name (second group), votes for (third group), votes against (fourth group)
+
+**(Post-GA2026) WA resolution is discarded at vote (rdiscard)**
+
+`^The (General Assembly|Security Council) resolution "(.+)" was discarded by the WA for rule violations after garnering ([0-9,]+) votes in favor and ([0-9,]+) votes against$`
 - data: chamber (first group), proposal name (second group), votes for (third group), votes against (fourth group)
 
 **Delegate approves WA proposal (rsapp)**
