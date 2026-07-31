@@ -767,7 +767,7 @@ Subexpressions:
 
 **(Post-GA2026) WA resolution is passed (rspass)**
 
-`^The (General Assembly|Security Council) resolution &&(?:GA|SC)RES:(?:2|3):([0-9]+):(.+)&& was passed ([0-9,]+) votes to ([0-9,]+)(?:, and recommended for adoption by all WA member nations)?$`
+`^The (General Assembly|Security Council) resolution &&(?:GA|SC)RES:(?:2|3):([0-9]+):(.+)&& was passed ([0-9,]+) votes to ([0-9,]+)(?:(?:, and recommended for adoption by all WA member nations)|(?:, and implemented in all WA member nations))?$`
 - data: chamber (first group), resolution id (second group), proposal name (third group - is URL encoded), votes for (fourth group), votes against (fifth group)
 
 **(Pre-GA2026) WA resolution fails at vote (rsfail)**
