@@ -95,6 +95,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("addxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ granted posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board to ([a-zA-Z ]+) in embassy regions$"#)?),
         ("remxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ revoked posting privileges on the %%([0-9a-z_-]+)%% Regional Message Board from ([a-zA-Z ]+) in embassy regions$"#)?),
         ("wzbanexp", Regex::new(r#"^Regional bans expired in %%([0-9a-z_-]+)%%$"#)?),
+        ("rgenkey", Regex::new(r#"^@@([0-9a-z_-]+)@@ generated a Telegram API Key for %%([0-9a-z_-]+)%%$"#)?),
         // bucket: maps
         ("mcreate", Regex::new(r#"^@@([0-9a-z_-]+)@@ created &&([0-9a-z_-]+)&&$"#)?),
         ("mvcreate", Regex::new(r#"^@@([0-9a-z_-]+)@@ created \*\*([0-9a-z_-]+)\*\*$"#)?),
@@ -164,6 +165,8 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("rsptopic", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated a forum topic link for WA proposal ([0-9a-z_-]+)$"#)?),
         ("rsadopt", Regex::new(r#"^@@([0-9a-z_-]+)@@ adopted General Assembly Resolution #(?:[0-9]+) "&&GARES:3:([0-9]+):(.+)&&"$"#)?),
         ("rscomply", Regex::new(r#"^@@([0-9a-z_-]+)@@ passed an omnibus bill to adopt all General Assembly resolutions$"#)?),
+        ("addrxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ set embassy posting for ([a-zA-Z0-9_ ]+) to ([a-zA-Z ]+) on the %%([0-9a-z_-]+)%% Regional Message Board$"#)?),
+        ("remrxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ blocked embassy posting from ([a-zA-Z0-9_ ]+) on the %%([0-9a-z_-]+)%% Regional Message Board$"#)?),
     ];
 
     let regex_set = RegexSet::new(

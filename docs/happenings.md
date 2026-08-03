@@ -635,6 +635,12 @@ This happening is skipped by Akari as it is generated at the same time as the ab
 `^Regional bans expired in %%([0-9a-z_-]+)%%$`
 - origin: first group
 
+**Officer generates regional API key (rgenkey)**
+
+`^@@([0-9a-z_-]+)@@ generated a Telegram API Key for %%([0-9a-z_-]+)%%$`
+- actor: first group
+- origin: second group
+
 ## bucket: maps
 
 **Nation creates a new map (mcreate)**
@@ -1111,6 +1117,21 @@ Note: there does not appear to be an equivalent happening for repeals of _nation
 `^@@([0-9a-z_-]+)@@ passed an omnibus bill to adopt all General Assembly resolutions$`
 - actor: first group
 - origin: from `region:` bucket or [unknown]
+
+**Nation grants posting privileges to a certain embassy region (addrxrmb)**
+
+`^@@([0-9a-z_-]+)@@ set embassy posting for ([a-zA-Z0-9_ ]+) to ([a-zA-Z ]+) on the %%([0-9a-z_-]+)%% Regional Message Board$`
+- actor: first group
+- origin: fourth group
+- destination: second group (canonicalized)
+- data: third group (nation group allowed to post)
+
+**Nation revokes posting privileges from a certain embassy region (remrxrmb)**
+
+`^@@([0-9a-z_-]+)@@ blocked embassy posting from ([a-zA-Z0-9_ ]+) on the %%([0-9a-z_-]+)%% Regional Message Board$`
+- actor: first group
+- origin: third group
+- destination: second group (canonicalized)
 
 # System events
 

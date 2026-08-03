@@ -107,6 +107,7 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("addxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
     map.insert("remxrmb", vec![Actor(1), Origin(2), Data(vec![3])].into());
     map.insert("wzbanexp", vec![Origin(1)].into());
+    map.insert("rgenkey", vec![Actor(1), Origin(2)].into());
     // bucket: maps
     map.insert("mcreate", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("mvcreate", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
@@ -175,6 +176,8 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("rsptopic", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("rsadopt", Processor::init(vec![BucketOrigin, Actor(1), Data(vec![2])], nrspass_ext));
     map.insert("rscomply", vec![BucketOrigin, Actor(1)].into());
+    map.insert("addrxrmb", Processor::init(vec![Actor(1), Origin(4), Data(vec![3])], rxrmb_ext));
+    map.insert("remrxrmb", Processor::init(vec![Actor(1), Origin(3)], rxrmb_ext));
 
     map
 }
@@ -371,4 +374,8 @@ fn rssubmit_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
     }
 
     event.data.push(captures[4].to_string());
+}
+
+fn rxrmb_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
+    event.destination = Some(captures[2].replace(" ", "_").to_ascii_lowercase());
 }
