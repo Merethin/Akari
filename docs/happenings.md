@@ -1133,6 +1133,13 @@ Note: there does not appear to be an equivalent happening for repeals of _nation
 - origin: third group
 - destination: second group (canonicalized)
 
+**Nation resets posting privileges to default for a certain embassy region (defrxrmb)**
+
+`^@@([0-9a-z_-]+)@@ reset embassy posting for ([a-zA-Z0-9_ ]+) to global default in %%([0-9a-z_-]+)%%$`
+- actor: first group
+- origin: third group
+- destination: second group (canonicalized)
+
 # System events
 
 These are not emitted by NationStates but by Akari itself.

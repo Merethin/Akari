@@ -167,6 +167,7 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("rscomply", Regex::new(r#"^@@([0-9a-z_-]+)@@ passed an omnibus bill to adopt all General Assembly resolutions$"#)?),
         ("addrxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ set embassy posting for ([a-zA-Z0-9_ ]+) to ([a-zA-Z ]+) on the %%([0-9a-z_-]+)%% Regional Message Board$"#)?),
         ("remrxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ blocked embassy posting from ([a-zA-Z0-9_ ]+) on the %%([0-9a-z_-]+)%% Regional Message Board$"#)?),
+        ("defrxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ reset embassy posting for ([a-zA-Z0-9_ ]+) to global default in %%([0-9a-z_-]+)%%$"#)?),
     ];
 
     let regex_set = RegexSet::new(
