@@ -1,7 +1,7 @@
 use std::{borrow::Cow, error::Error, fs::read_to_string, process::exit};
 use log::{warn, error, info};
 use async_trait::async_trait;
-use sqlx::postgres::PgConnectOptions;
+use sqlx::{AssertSqlSafe, postgres::PgConnectOptions};
 
 use crate::{output::{OutputChannel, OutputChannelFilter}, config::Config, events::ParsedEvent};
 
@@ -64,7 +64,7 @@ impl OutputChannel for PostgresOutput {
 
         if event.event == -1 {
             let result = sqlx::query(
-                &format!("INSERT INTO {} (time, category, data) VALUES ($1, $2, $3)", SYSTEM_TABLE_NAME)
+                AssertSqlSafe(format!("INSERT INTO {} (time, category, data) VALUES ($1, $2, $3)", SYSTEM_TABLE_NAME))
             ).bind(event.time as i64)
             .bind(&event.category)
             .bind(data.as_ref())
@@ -75,8 +75,8 @@ impl OutputChannel for PostgresOutput {
             }
         } else {
             let result = sqlx::query(
-                &format!("INSERT INTO {} (event, time, actor, receptor, origin, destination, category, data)
-                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING", TABLE_NAME)
+                AssertSqlSafe(format!("INSERT INTO {} (event, time, actor, receptor, origin, destination, category, data)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT DO NOTHING", TABLE_NAME))
             ).bind(event.event)
             .bind(event.time as i64)
             .bind(&event.actor)
