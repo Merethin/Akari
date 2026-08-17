@@ -4,7 +4,7 @@ FROM rust:1.94-alpine AS build
 WORKDIR /usr/src/akari
 RUN cargo init --bin .
 
-RUN apk add libressl-dev musl-dev
+RUN apk add openssl-dev musl-dev
 
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
