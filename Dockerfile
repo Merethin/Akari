@@ -1,5 +1,5 @@
 
-FROM rust:1.90-alpine AS build
+FROM rust:1.94-alpine AS build
 
 WORKDIR /usr/src/akari
 RUN cargo init --bin .
@@ -18,7 +18,7 @@ COPY ./migrations ./migrations
 RUN rm ./target/release/deps/akari*
 RUN cargo build --release
 
-FROM rust:1.90-alpine
+FROM rust:1.94-alpine
 
 WORKDIR /
 
