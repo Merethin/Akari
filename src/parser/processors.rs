@@ -175,10 +175,11 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("rsvtopic", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("rsptopic", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("rsadopt", Processor::init(vec![BucketOrigin, Actor(1), Data(vec![2])], nrspass_ext));
-    map.insert("rscomply", vec![BucketOrigin, Actor(1)].into());
+    map.insert("rscomply", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("addrxrmb", Processor::init(vec![Actor(1), Origin(4), Data(vec![3])], rxrmb_ext));
     map.insert("remrxrmb", Processor::init(vec![Actor(1), Origin(3)], rxrmb_ext));
     map.insert("defrxrmb", Processor::init(vec![Actor(1), Origin(3)], rxrmb_ext));
+    map.insert("trcreate", vec![BucketOrigin, Actor(1), Data(vec![2,3])].into());
 
     map
 }

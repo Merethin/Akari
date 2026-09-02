@@ -1064,16 +1064,29 @@ These are weird. Don't show up in region feeds, but show up in nation feeds (Onl
 - origin: first group
 - data: second group (proposal type)
 
-**A SC proposal nominating a nation passes (nscpass)**
+**(Pre-GA2026) A SC proposal nominating a nation passes (nscpass)**
 
 `^@@([0-9a-z_-]+)@@ was (commended|condemned) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$`
 - receptor: first group
 - origin: from `region:` bucket or [unknown]
 - data: second group (resolution type), third group (resolution id)
 
-**A SC proposal nominating a region passes (rscpass)**
+**(Post-GA2026) A SC proposal nominating a nation passes (nscpass)**
+
+`^@@([0-9a-z_-]+)@@ was (commended|condemned) by &&SCRES:2:([0-9]+):Security%20Council%20Resolution%20%23%20(?:[0-9]+)&&$`
+- receptor: first group
+- origin: from `region:` bucket or [unknown]
+- data: second group (resolution type), third group (resolution id)
+
+**(Pre-GA2026) A SC proposal nominating a region passes (rscpass)**
 
 `^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$`
+- origin: first group
+- data: second group (resolution type), third group (resolution id)
+
+**(Post-GA2026) A SC proposal nominating a region passes (rscpass)**
+
+`^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by &&SCRES:2:([0-9]+):Security%20Council%20Resolution%20%23%20(?:[0-9]+)&&$`
 - origin: first group
 - data: second group (resolution type), third group (resolution id)
 
@@ -1114,9 +1127,10 @@ Note: there does not appear to be an equivalent happening for repeals of _nation
 
 **Nation adopts all GA resolutions (rscomply)**
 
-`^@@([0-9a-z_-]+)@@ passed an omnibus bill to adopt all General Assembly resolutions$`
+`^@@([0-9a-z_-]+)@@ passed an omnibus bill to adopt ([0-9]+) General Assembly resolutions?$`
 - actor: first group
 - origin: from `region:` bucket or [unknown]
+- data: number of resolutions adopted (second group)
 
 **Nation grants posting privileges to a certain embassy region (addrxrmb)**
 
@@ -1139,6 +1153,13 @@ Note: there does not appear to be an equivalent happening for repeals of _nation
 - actor: first group
 - origin: third group
 - destination: second group (canonicalized)
+
+**Nation creates General Assembly tranche (trcreate)**
+
+`^@@([0-9a-z_-]+)@@ created the tranche "(.+)" at <a href="/page=tranche/trancheid=([0-9]+)">/page=tranche/trancheid=(?:[0-9]+)</a>$`
+- actor: first group
+- origin: from `region:` bucket or [unknown]
+- data: tranche name (second group), tranche ID (third group) 
 
 # System events
 

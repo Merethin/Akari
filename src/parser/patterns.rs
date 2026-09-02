@@ -157,17 +157,18 @@ pub fn generate_patterns() -> Result<(Vec<(&'static str, Regex)>, RegexSet), Err
         ("nscnom", Regex::new(r#"^@@([0-9a-z_-]+)@@ was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
         ("rscnom", Regex::new(r#"^%%([0-9a-z_-]+)%% was nominated for a World Assembly (Commendation|Condemnation) by @@([0-9a-z_-]+)@@$"#)?),
         ("rsctg", Regex::new(r#"^%%([0-9a-z_-]+)%% was targeted for (Liberation|Injunction) in a World Assembly proposal by @@([0-9a-z_-]+)@@$"#)?),
-        ("nscpass", Regex::new(r#"^@@([0-9a-z_-]+)@@ was (commended|condemned) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
-        ("rscpass", Regex::new(r#"^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # ([0-9]+)</a>$"#)?),
+        ("nscpass", Regex::new(r#"^@@([0-9a-z_-]+)@@ was (commended|condemned) by &&SCRES:2:([0-9]+):Security%20Council%20Resolution%20%23%20(?:[0-9]+)&&$"#)?),
+        ("rscpass", Regex::new(r#"^%%([0-9a-z_-]+)%% was (commended|condemned|liberated|injuncted) by &&SCRES:2:([0-9]+):Security%20Council%20Resolution%20%23%20(?:[0-9]+)&&$"#)?),
         ("skipped", Regex::new(r#"^(Commended|Condemned|Liberated|Injuncted) by <a href="/page=WA_past_resolution/id=(?:[0-9]+)/council=2">Security Council Resolution # (?:[0-9]+)</a>$"#)?),
         ("rscrep", Regex::new(r#"^(Commend|Condemn|Liberate|Injunct) resolution repealed$"#)?),
         ("rsvtopic", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated a forum topic link for WA current ([0-9]+)$"#)?),
         ("rsptopic", Regex::new(r#"^@@([0-9a-z_-]+)@@ updated a forum topic link for WA proposal ([0-9a-z_-]+)$"#)?),
         ("rsadopt", Regex::new(r#"^@@([0-9a-z_-]+)@@ adopted General Assembly Resolution #(?:[0-9]+) "&&GARES:3:([0-9]+):(.+)&&"$"#)?),
-        ("rscomply", Regex::new(r#"^@@([0-9a-z_-]+)@@ passed an omnibus bill to adopt all General Assembly resolutions$"#)?),
+        ("rscomply", Regex::new(r#"^@@([0-9a-z_-]+)@@ passed an omnibus bill to adopt ([0-9]+) General Assembly resolutions?$"#)?),
         ("addrxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ set embassy posting for ([a-zA-Z0-9_ ]+) to ([a-zA-Z ]+) on the %%([0-9a-z_-]+)%% Regional Message Board$"#)?),
         ("remrxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ blocked embassy posting from ([a-zA-Z0-9_ ]+) on the %%([0-9a-z_-]+)%% Regional Message Board$"#)?),
         ("defrxrmb", Regex::new(r#"^@@([0-9a-z_-]+)@@ reset embassy posting for ([a-zA-Z0-9_ ]+) to global default in %%([0-9a-z_-]+)%%$"#)?),
+        ("trcreate", Regex::new(r#"^@@([0-9a-z_-]+)@@ created the tranche "(.+)" at <a href="/page=tranche/trancheid=([0-9]+)">/page=tranche/trancheid=(?:[0-9]+)</a>$"#)?),
     ];
 
     let regex_set = RegexSet::new(
