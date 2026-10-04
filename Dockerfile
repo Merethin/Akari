@@ -8,6 +8,7 @@ RUN apk add openssl-dev musl-dev
 
 COPY ./Cargo.lock ./Cargo.lock
 COPY ./Cargo.toml ./Cargo.toml
+COPY ./sqlx.toml ./sqlx.toml
 
 RUN cargo build --release
 RUN rm src/*.rs
