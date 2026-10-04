@@ -20,6 +20,8 @@ Akari pulls events from https://www.nationstates.net/api/all by default. This ca
 
 Akari is multithreaded - it uses one thread to read SSE events from NS, one to broadcast parsed events to outputs, and a variable number of worker threads to parse the events and structure the data. The number of workers can be adjusted in the input section of [akari.toml](config/akari.toml). It is 2 by default, you probably won't need many more.
 
+In the `[input]` section, you can optionally set `no_event_timeout` to a number if you want Akari to trigger a reconnection when, through a working connection, no event is received for X seconds. (Before this setting was introduced, the default behavior was `no_event_timeout = 30`, meaning it would reconnect if no event was received in a 30 second time window, now by default Akari only reconnects on error).
+
 **Outputs**
 
 Currently, there are 4 implemented output sources, each of which can be enabled or disabled separately and assigned an `include` list (to only broadcast certain events to that output) or an `exclude` list (to exclude certain events from being broadcast to that output).

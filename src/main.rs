@@ -92,8 +92,8 @@ async fn main_loop(
                 },
                 MessageResult::NoMessages => {
                     let elapsed = Instant::now().duration_since(last_event_time);
-                    if elapsed.as_secs() > 30 {
-                        warn!("No events in the last 30 seconds, dropping connection and reconnecting");
+                    if let Some(timeout) = config.input.no_event_timeout && elapsed.as_secs() > timeout {
+                        warn!("No events in the last {timeout} seconds, dropping connection and reconnecting");
                         break;
                     }
                 },

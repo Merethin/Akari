@@ -19,6 +19,7 @@ pub struct OutputConfig {
 pub struct InputConfig {
     pub url: String,
     pub workers: usize,
+    pub no_event_timeout: Option<u64>,
 }
 
 #[derive(Clone, Deserialize, Serialize, Debug)]
@@ -76,7 +77,8 @@ impl Default for InputConfig {
     fn default() -> Self {
         InputConfig { 
             url: "https://www.nationstates.net/api/all".into(),
-            workers: 2 
+            workers: 2,
+            no_event_timeout: None
         }
     }
 }
