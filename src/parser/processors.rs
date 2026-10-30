@@ -154,12 +154,14 @@ pub fn generate_processor_map() -> HashMap<&'static str, Processor> {
     map.insert("secrvote", vec![BucketOrigin, Actor(1), Data(vec![2])].into());
     map.insert("secelect", vec![BucketOrigin, Receptor(1)].into());
     // bucket: zombie
-    map.insert("zhorde", vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2,4])].into());
-    map.insert("zconvert", vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2,4])].into());
-    map.insert("zclean", vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3,5])].into());
-    map.insert("zcleanrs", vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3,5,6])].into());
-    map.insert("zcure", vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3,5])].into());
-    map.insert("zcurers", vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3,5,6])].into());
+    map.insert("zhorde", Processor::init(vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2])], zhorde_ext));
+    map.insert("zconvert", Processor::init(vec![BucketOrigin, Actor(3), Receptor(1), Data(vec![2])], zhorde_ext));
+    map.insert("zclean", Processor::init(vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3])], zclean_ext));
+    map.insert("zcleanrs", Processor::init(vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3])], zcleanrs_ext));
+    map.insert("zcure", Processor::init(vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3])], zclean_ext));
+    map.insert("zcurers", Processor::init(vec![BucketOrigin, Actor(4), Receptor(1), Data(vec![2,3])], zcleanrs_ext));
+    map.insert("zsetpw", vec![Actor(1), Origin(3), Data(vec![2])].into());
+    map.insert("zrmpw", vec![Actor(1), Origin(2)].into());
     // bucket: all
     map.insert("govabd", vec![BucketOrigin, Actor(1)].into());
     map.insert("npoll", vec![Actor(1), Origin(2), Data(vec![3])].into());
@@ -380,4 +382,22 @@ fn rssubmit_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
 
 fn rxrmb_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
     event.destination = Some(captures[2].replace(" ", "_").to_ascii_lowercase());
+}
+
+fn zhorde_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
+    let count = &captures[4];
+    event.data.push(count.replace(",", ""));
+}
+
+fn zclean_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
+    let count = &captures[5];
+    event.data.push(count.replace(",", ""));
+}
+
+fn zcleanrs_ext(event: &mut ParsedEvent, captures: Captures<'_>, _: &[&str]) {
+    let count = &captures[5];
+    let focus = &captures[6];
+
+    event.data.push(count.replace(",", ""));
+    event.data.push(focus.to_string());
 }

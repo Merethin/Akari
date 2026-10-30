@@ -951,7 +951,7 @@ Subexpressions:
 
 **Nation is ravaged by zombie horde (zhorde)**
 
-`^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9]+) million survivors$`
+`^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9,]+) million survivors$`
 - actor: third group
 - receptor: first group
 - origin: from `region:` bucket or [unknown]
@@ -959,7 +959,7 @@ Subexpressions:
 
 **Nation is ravaged by zombie horde, converting it to a zombie exporter (zconvert)**
 
-`^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9]+) million survivors and converting to a zombie exporter! Oh no!$`
+`^@@([0-9a-z_-]+)@@ was ravaged by a Zombie ([A-Za-z ]+) Horde from @@([0-9a-z_-]+)@@, infecting ([0-9,]+) million survivors and converting to a zombie exporter! Oh no!$`
 - actor: third group
 - receptor: first group
 - origin: from `region:` bucket or [unknown]
@@ -967,7 +967,7 @@ Subexpressions:
 
 **Nation's zombies are killed by a TZES (zclean)**
 
-`^@@([0-9a-z_-]+)@@ was cleansed by a Level ([0-9]+) ([A-Za-z ]+) Tactical Zombie Elimination Squad from @@([0-9a-z_-]+)@@, killing ([0-9]+) million zombies$`
+`^@@([0-9a-z_-]+)@@ was cleansed by a Level ([0-9]+) ([A-Za-z ]+) Tactical Zombie Elimination Squad from @@([0-9a-z_-]+)@@, killing ([0-9,]+) million zombies$`
 - actor: fourth group
 - receptor: first group
 - origin: from `region:` bucket or [unknown]
@@ -975,7 +975,7 @@ Subexpressions:
 
 **Nation's zombies are killed by a TZES, restoring its previous specialty (zcleanrs)**
 
-`^@@([0-9a-z_-]+)@@ was cleansed by a Level ([0-9]+) ([A-Za-z ]+) Tactical Zombie Elimination Squad from @@([0-9a-z_-]+)@@, killing ([0-9]+) million zombies and restoring to (.+)!$`
+`^@@([0-9a-z_-]+)@@ was cleansed by a Level ([0-9]+) ([A-Za-z ]+) Tactical Zombie Elimination Squad from @@([0-9a-z_-]+)@@, killing ([0-9,]+) million zombies and restoring to (.+)!$`
 - actor: fourth group
 - receptor: first group
 - origin: from `region:` bucket or [unknown]
@@ -983,7 +983,7 @@ Subexpressions:
 
 **Nation's zombies are cured by a cure missile (zcure)**
 
-`^@@([0-9a-z_-]+)@@ was struck by a Mk ([IV]+) \(([A-Za-z ]+)\) Cure Missile from @@([0-9a-z_-]+)@@, curing ([0-9]+) million infected$`
+`^@@([0-9a-z_-]+)@@ was struck by a Mk ([IV]+) \(([A-Za-z ]+)\) Cure Missile from @@([0-9a-z_-]+)@@, curing ([0-9,]+) million infected$`
 - actor: fourth group
 - receptor: first group
 - origin: from `region:` bucket or [unknown]
@@ -991,11 +991,24 @@ Subexpressions:
 
 **Nation's zombies are cured by a cure missile, restoring its previous specialty (zcurers)**
 
-`^@@([0-9a-z_-]+)@@ was struck by a Mk ([IV]+) \(([A-Za-z ]+)\) Cure Missile from @@([0-9a-z_-]+)@@, curing ([0-9]+) million infected and restoring to (.+)!$`
+`^@@([0-9a-z_-]+)@@ was struck by a Mk ([IV]+) \(([A-Za-z ]+)\) Cure Missile from @@([0-9a-z_-]+)@@, curing ([0-9,]+) million infected and restoring to (.+)!$`
 - actor: fourth group
 - receptor: first group
 - origin: from `region:` bucket or [unknown]
 - data: missile level (second group), missile type (third group), zombies cured (fifth group), specialty restored (sixth group)
+
+**Nation activates Z-Day Border Control (zsetpw)**
+
+`^@@([0-9a-z_-]+)@@ instituted (Lockdown|Keycode) Zombie Border Control in %%([0-9a-z_-]+)%%$`
+- actor: first group
+- origin: third group
+- data: second group (border control type)
+
+**Nation removes Z-Day Border Control (zrmpw)**
+
+`^@@([0-9a-z_-]+)@@ removed Zombie Border Control in %%([0-9a-z_-]+)%%$`
+- actor: first group
+- origin: second group
 
 # Generic
 
